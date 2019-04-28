@@ -1,6 +1,6 @@
 #!/bin/bash
 # Easier to make a script and describe within what is happening. If you are happy with this script, or are done editing,
-# to activate the script type in terminal '$ bash <filepath>/buildrom.sh'
+# to activate the script type, in terminal, '$ chmod +x <filepath>/buildrom.sh' then '$ bash <filepath>/buildrom.sh'
 # Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you want.
 sudo apt install -y openjdk-8-jdk git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
