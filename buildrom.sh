@@ -40,9 +40,9 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 . build/envsetup.sh
 lunch lineage_starlte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found 
-# in 'builddir/device/samsung/starlte' and rename it to ypur ROM's needed .mk. For example 'PixelExperience' would
+# in 'builddir/device/samsung/starlte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_starlte.mk'.
-# Likewise, within this file change the name of the product/device, for example from lineage_starlte to aosp_starlte if you are
+# Likewise, within this file change the name of the product/device, for example from 'lineage_starlte to aosp_starlte' if you are
 # building 'PixelExperience'.
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish to do this remove '$(nproc --all)' and replace it with
@@ -62,15 +62,15 @@ cd ~/rom/
 . build/envsetup.sh
 lunch lineage_star2lte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found 
-# in 'builddir/device/samsung/star2lte' and rename it to ypur ROM's needed .mk. For example 'PixelExperience' would
+# in 'builddir/device/samsung/star2lte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_star2lte.mk'.
-# Likewise, within this file change the name of the product/device, for example from lineage_star2lte to aosp_star2lte if you are
+# Likewise, within this file change the name of the product/device, for example from 'lineage_star2lte' to 'aosp_star2lte' if you are
 # building 'PixelExperience'.
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish to do this remove '$(nproc --all)' and replace it with
 # the number threads you would like to give. Example if you have 4 CPU Cores, then you can make 4 threads using '$ make bacon -j4'
-mv ~/rom/out/target/product/starlte/lineage-15.1-*.zip ~/compiled/
-mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
+mv ~/rom/out/target/product/star2lte/lineage-15.1-*.zip ~/compiled/
+mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 # If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
 # to move the files out and put them into the 'compiled' directory.
 toilet -f mono12 "star2 done"
