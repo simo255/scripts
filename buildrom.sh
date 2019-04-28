@@ -5,10 +5,11 @@
 # Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you please.
 sudo apt update && sudo apt upgrade -y
 # Update Distro's repository to be able to fetch all needed packages in next command.
-sudo apt install -y openjdk-8-jdk git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
+sudo apt install -y openjdk-8-jdk toilet git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
-# If you find that during your compile of a ROM that it errors to require another package then simply add it to the end of the 
-# above command.
+# If you find that during your compile of a ROM that it errors to require another package then simply:
+#'$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
+# Of course, once you have installed these building packages you can adapt the script by removing the above command.
 mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
@@ -56,12 +57,10 @@ mv ~/rom/out/target/product/starlte/lineage-15.1-*.zip ~/compiled/
 mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
 # If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
 # to move the files out and put them into the 'compiled' directory.
-# The reason for the move is due to the below 'make clean' command which will wipe out the '~/rom/build' where the ROM .zip
-# is also held.
+# The reason for the move is to save time going through multiple directories, but if you don't mind it feel free to remove
+# the command
 toilet -f mono12 "star done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
-make clean
-# Start again fresh, for building the next device.
 cd
 cd ~/rom/
 . build/envsetup.sh
@@ -85,4 +84,3 @@ make clean
 # Clean out the obsolte workspace ready for next time. 
 toilet -f mono12 "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
-
