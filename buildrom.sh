@@ -13,54 +13,59 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y openjdk-8-jdk toilet python gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
 # If you find that during your compile of a ROM that it errors to require another package then simply:
-#'$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
-# Of course, once you have installed these building packages you can adapt the script by removing the above command.
+# '$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
+# Of course, once you have installed these building packages you can adapt the script by '#' removing the above command.
 mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
-# The above will install the repo tool which will enable you to download and then stay in sync with a ROM's source, if it's
+# The above will install the repo tool which will enable you to download and then stay in sync with a ROM's Git source, if it is
 # updated at remote.
 # repo is a python wrapper for git.
 git config --global user.name AzzyC
 git config --global user.email azmath2000@gmail.com
 # Change above config according to your GitHub account.
 git config --global color.ui true
-# Skip need for user input to respond to colouring tags question.
+# Skips prompt requiring user input for colourised tags during sync.
 if [ ! -d "compiled" ]; then
 # The script is checking 'if' the 'compiled' directory does not exist..
 mkdir ~/compiled/
-# 'then' to make one.
+# 'then' to make one if holds true.
 fi
 if [ ! -d "rom" ]; then
 # The script is checking 'if' the 'rom' directory does not exist..
 mkdir ~/rom/
-# 'then' to make one.
+# 'then' to make one then to make on if holds true.
 fi
 cd ~/rom/
 repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
-# This line will sync the ROM source for oreo-based Lineage. If you would like to build a build a different ROM, search on Google
-# for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file which simply
-# automates the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds of repositories.
-# I would advise you to inspect the manifest that I made 2 commands below which clones necessary repositories for the
-# S9(+) Device, Kernel and Vendor Tree, which are the 3 main components needed to succesfully any ROM for a device(s).
-# To give an example, if you would like to build oreo-based PixelExprience then your command should be:
-# repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
+# This line will initialise a sync for oreo-based Lineage (15.1) ROM source. If you would like to build a build a different ROM,
+# search on Google for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file
+# which simply automates the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds
+# of repositories. The manifest, can be found within a hidden directory which 'repo init' occurred,
+# called '.repo' => '~/rom/.repo/manifests'.
+# I would advise you to inspect this manifest and the one that is 2 commands below.
+# To give an example of another ROM you could init(ialise), if you wanted oreo-based PixelExprience then your command should be:
+#repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
 # '-b' stands for branch which in most cases you have to specify as a different branch may be defaulted, within a
 # particular repository, so be careful of this and make sure you're not wasting a lot time syncing an undesired source.
 cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
 # The file brought from git cloning this repository will automatically clone repositories required for
-# starxxx Device, Kernel and Vendor tree for Oreo. '#'' the above command if you want to file is commonly known as a 
-# 'roomservice.xml' as it fetches everything for you, but it could come under any name.
-#
+# starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
+# as it fetches everything for you, but it could come under any name.
+# Using these manifests as examples should give you enough knowledge to make your own, for a time of a bringup on a
+# different device.
+# This manifest will coincide with the ROM source manifest, when the script reaches the below '$ repo sync ..' command.
 #git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
-# The file brought from git cloning this repository will automatically clone Device, Kernel and Vendor alpha Pie tree at the
-# stage they were at, before they were made private. Do not report back bugs as they are known and most likely fixed in
+# The file brought from git cloning this repository will automatically clone Device, Kernel and Vendor alpha Pie tree for
+# starxxx at the stage they were at, before they became private. Do not report back bugs as they are known and most likely fixed in
 # the private workings. You are expected to use these sources to experiment with an open-mind.
 #
 #git clone https://github.com/synt4x93/Manifest.git local_manifests
 # If you would like to sync Crownlte's Device, Kernel and Vendor Tree instead, still at version Oreo.
+# Notice how on this command, local_manifests has been added, this is to direct the clone to this folder name, which your
+# own manifests should be kept in.
 cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
@@ -69,7 +74,7 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 # to change and build a different ROM, then you can simply hit the above command again and it will fetch any new updates from
 # the remote source, if there are any, and you do not have to sync all over again.
 . build/envsetup.sh
-# This bashes a script tp setup a building workspace i.e. Tools, Paths. Validates if you have what is needed to compile.
+# This bashes a script tp setup a building workspace i.e. Tools, Paths etc. Validates if you have what is needed to compile.
 lunch lineage_starlte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found
 # in '~/rom/device/samsung/starlte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
@@ -80,7 +85,7 @@ lunch lineage_starlte-userdebug
 # would need '$ lunch aosp_starlte-userdebug'.	Hence in most cases, '$ lunch (romName)_(deviceName)-userdebug'
 #
 #lunch lineage_crownlte-userdebug
-# The above comments for starlte apply to crownlte too, just change the names respectively.  
+# The above comments for starlte apply to crownlte too, just change the names respectively.
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
@@ -90,7 +95,7 @@ mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
 # If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
 # to move the files out and put them into the 'compiled' directory.
 # The reason for the move is to save time going through multiple directories, but if you don't mind it feel free to remove
-# the command
+# the command.
 #
 #mv ~/rom/out/target/product/crownlte/lineage-15.1-*.zip ~/compiled/
 #mv ~/rom/out/target/product/crownlte/lineage-15.1-*.md5sum ~/compiled/
@@ -121,6 +126,7 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 make clean
-# Clean out the obsolte workspace ready for next time.
+# Clean out the obsolte workspace ready for the next time you bash this script. It is important that you 'make clean'
+# from time to time, which clears build cache if it has been a long time since you have last built.
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
