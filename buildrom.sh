@@ -1,11 +1,11 @@
 #!/bin/bash
-# Easier to make a script and describe within what is happening. If you are happy with the  default script, or are done editing,
+# Easier to make a script and describe within what is happening. If you are happy with the default script, or are done editing,
 # to activate the script type in your terminal, '$ sudo chmod +x <filepath>/buildrom.sh' to make the script executable 
 # then '$ bash <filepath>/buildrom.sh'.
 # Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you please.
 sudo apt update && sudo apt upgrade -y
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
-sudo apt install -y openjdk-8-jdk toilet gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
+sudo apt install -y openjdk-8-jdk toilet python gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
 # If you find that during your compile of a ROM that it errors to require another package then simply:
 #'$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
@@ -20,14 +20,16 @@ chmod a+x ~/bin/repo
 git config --global user.name AzzyC
 git config --global user.email azmath2000@gmail.com
 # Change above config according to your GitHub account.
+git config --global color.ui true
+# Skip need for user input to respond to colouring tags question.
 if [ ! -d "compiled" ]; then
-mkdir -/compiled/
+mkdir ~/compiled/
 fi
 if [ ! -d "rom" ]; then
 mkdir ~/rom/
 fi
 cd ~/rom/
-repo init -u git://github.com/LineageOS/android.git -b lineage-15.1
+repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 # This line will sync the ROM source for oreo-based Lineage. Edit if you would like to build a build a different ROM with its
 # according manifest. To give an example, if you would like to build oreo-based PixelExprience then your command should be:
 # repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
