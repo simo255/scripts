@@ -1,78 +1,85 @@
 #!/bin/bash
-# Easier to make a script and describe within what is happening. If you are happy with the default script, or are done editing,
-# to activate the script type in your terminal, '$ sudo chmod +x scripts/buildrom.sh' to make the script executable
-# then '$ bash scripts/buildrom.sh'.
-# If you want to stop/interupt the script at any point by inputting 'Ctrl + C', you will only make the script skip the current
-# process and move onto the next command. Most cases the script should abort after an interuption anyway, due to a lacking command(s).
-# Do note this script default compiles LineageOS 15.1 for both starlte and star2lte. There are commands to build for crownlte,
-# but by default they have been disabled.
+# Do note this script by default compiles LineageOS 15.1 for both starlte and star2lte. There are commands to build for crownlte
+# and other ROM's but they have been disabled to focus on one function. 
+# If you are happy with the default script, or are done editing, type in to your terminal:
+# '$ sudo chmod +x scripts/buildrom.sh' - Make the script executable;
+# '$ bash scripts/buildrom.sh' - Activate the script.
 # Key: To enable a command, remove the '#' at the start of the line; to disbale a command, insert a '#'.
-# I would reccomend to keep the entirity of the script, just insert a '#' at the start of command input line that you do not want.
+# Example commands have no space between the '#' and the start of the command, so enable as you please but also disable accordingly,
+# to avoid command conflicts and potentially an unsuccessful script.
+# I would reccomend to keep the entirity of the script, to ensure that the guided comments are still there for reference, 
+# so only disbable the commands you no longer want/require.
+# If you want to stop/interupt the script at any point, input 'Ctrl + C'. You will notice that the script skiped the current
+# process and moved onto the next command, but in most cases the script should abort anyway, due to a lacking command(s).
 sudo apt update && sudo apt upgrade -y
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
-sudo apt install -y openjdk-8-jdk toilet python gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
+sudo apt install -y openjdk-8-jdk toilet python gnupg flex clang gcc bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
 # If you find that during your compile of a ROM that it errors to require another package then simply:
 # '$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
-# Of course, once you have installed these building packages you can adapt the script by '#' removing the above command.
+# Once you have installed these building packages you can disable the command, as now you only need to update or upgrade.
 mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
-# The above will install the repo tool which will enable you to download and then stay in sync with a ROM's Git source, if it is
+# The above will install the repo tool which will allow you to download and then stay in sync with a ROM's Git source, if it is
 # updated at remote.
 # repo is a python wrapper for git.
 git config --global user.name AzzyC
 git config --global user.email azmath2000@gmail.com
 # Change above config according to your GitHub account.
 git config --global color.ui true
-# Skips prompt requiring user input for colourised tags during sync.
+# Skips prompt on 'repo init' requiring User input for colourised tags during sync.
 if [ ! -d "compiled" ]; then
 # The script is checking 'if' the 'compiled' directory does not exist..
 mkdir ~/compiled/
-# 'then' to make one if holds true.
+# 'then' to make one if there is not.
 fi
 if [ ! -d "rom" ]; then
 # The script is checking 'if' the 'rom' directory does not exist..
 mkdir ~/rom/
-# 'then' to make one then to make on if holds true.
+# 'then' to make one then to make one if there is not.
 fi
 cd ~/rom/
 repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 # This line will initialise a sync for oreo-based Lineage (15.1) ROM source. If you would like to build a build a different ROM,
-# search on Google for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file
-# which simply automates the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds
-# of repositories. The manifest, can be found within a hidden directory which 'repo init' occurred,
-# called '.repo' => '~/rom/.repo/manifests'.
-# I would advise you to inspect this manifest and the one that is 2 commands below.
+# search on Google for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'.
+#
 # To give an example of another ROM you could init(ialise), if you wanted oreo-based PixelExprience then your command should be:
 #repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
 # '-b' stands for branch which in most cases you have to specify as a different branch may be defaulted, within a
-# particular repository, so be careful of this and make sure you're not wasting a lot time syncing an undesired source.
+# particular repository. So become familiar with this and make sure you're not wasting time syncing an undesired source.
+#
+# A manifest is an .xml file which simply automates the cloning of all the all the ROM source directories, rather than a user
+# manually having to clone hundreds of repositories leading to insanity. The manifest, can be found within a hidden directory where
+# 'repo init' command occurred, called '.repo' => '~/rom/.repo/manifests'.
+# I would advise you to inspect this manifest and the one that is 2 commands below.
 cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
-# The file brought from git cloning this repository will automatically clone repositories required for
+# The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
 # as it fetches everything for you, but it could come under any name.
-# Using these manifests as examples should give you enough knowledge to make your own, for a time of a bringup on a
-# different device.
+#
 # This manifest will coincide with the ROM source manifest, when the script reaches the below '$ repo sync ..' command.
+# Using these manifests as examples should give you enough knowledge to make your own, for a time of a tree bringup on a
+# different device.
+#
 #git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
-# The file brought from git cloning this repository will automatically clone Device, Kernel and Vendor alpha Pie tree for
-# starxxx at the stage they were at, before they became private. Do not report back bugs as they are known and most likely fixed in
-# the private workings. You are expected to use these sources to experiment with an open-mind.
+# Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx at the stage they were at,
+# before they became private. DO NOT report bugs as they are known and most likely fixed in the private workings. You are expected
+# to use these sources to experiment with an open-mind.
 #
 #git clone https://github.com/synt4x93/Manifest.git local_manifests
-# If you would like to sync Crownlte's Device, Kernel and Vendor Tree instead, still at version Oreo.
-# Notice how on this command, local_manifests has been added, this is to direct the clone to this folder name, which your
-# own manifests should be kept in.
+# To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo.
+# Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest to,
+# and this is where you should add your own manifests.
 cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 # This will begin syncing the ROM source. The attached tags should ensure an effective sync, otherwise you can just use '$ repo sync'
-# Initially downloading your ROM's source will take a lot of time (depending on your interent speed also), but if you aren't looking
-# to change and build a different ROM, then you can simply hit the above command again and it will fetch any new updates from
-# the remote source, if there are any, and you do not have to sync all over again.
+# Initially downloading your ROM's source will take a lot of time (factoring in your interent speed also), but if you aren't looking
+# to change and build a different ROM's often, then you can simply hit the above command again and it will fetch any new updates from
+# the remote source, if there are any. - You do not have to wait for the sync all over again.
 . build/envsetup.sh
 # This bashes a script tp setup a building workspace i.e. Tools, Paths etc. Validates if you have what is needed to compile.
 lunch lineage_starlte-userdebug
