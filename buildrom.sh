@@ -1,7 +1,9 @@
 #!/bin/bash
 # Easier to make a script and describe within what is happening. If you are happy with the default script, or are done editing,
-# to activate the script type in your terminal, '$ sudo chmod +x <filepath>/buildrom.sh' to make the script executable 
+# to activate the script type in your terminal, '$ sudo chmod +x <filepath>/buildrom.sh' to make the script executable
 # then '$ bash <filepath>/buildrom.sh'.
+# If you want to stop/interupt the script at any point by inputting 'Ctrl + C', you will only make the script skip the current
+# process and move onto the next command. Most cases the script should abort after an interuption anyway, due to a lacking command(s).
 # Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you please.
 sudo apt update && sudo apt upgrade -y
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
@@ -23,39 +25,50 @@ git config --global user.email azmath2000@gmail.com
 git config --global color.ui true
 # Skip need for user input to respond to colouring tags question.
 if [ ! -d "compiled" ]; then
+# The script is checking 'if' the 'compiled' directory does not exist..
 mkdir ~/compiled/
+# 'then' to make one.
 fi
 if [ ! -d "rom" ]; then
+# The script is checking 'if' the 'rom' directory does not exist..
 mkdir ~/rom/
+# 'then' to make one.
 fi
 cd ~/rom/
 repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
-# This line will sync the ROM source for oreo-based Lineage. Edit if you would like to build a build a different ROM with its
-# according manifest. To give an example, if you would like to build oreo-based PixelExprience then your command should be:
+# This line will sync the ROM source for oreo-based Lineage. If you would like to build a build a different ROM, search on Google
+# for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file which simply automates
+# the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds of repositories.
+# I would advise you to inspect the manifest that I made 2 commands below which clones necessary repositories for the
+# S9(+) Device, Kernel and Vendor Tree, which are the 3 main components needed to succesfully any ROM for a device(s).
+# To give an example, if you would like to build oreo-based PixelExprience then your command should be:
 # repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
 # '-b' stands for branch which in most cases you have to specify as a different branch may be defaulted, within a
-# particular repository. 
+# particular repository, so be careful of this and make sure you're not wasting a lot time syncing an undesired source.
 cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
-# If you are part of the Exynos 9810 family, the file brought from git cloning this repository will automatically sync 
+# If you are part of the Exynos 9810 family, the file brought from git cloning this repository will automatically sync
 # star and star2 device tree. If you have your own manifest for your devices trees, remove the above command.
 cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
-# This will begin syncing the ROM source. The attached tags should ensure an effective sync, otherwise you can just use '$ repo sync' 
+# This will begin syncing the ROM source. The attached tags should ensure an effective sync, otherwise you can just use '$ repo sync'
 # Initially downloading your ROM's source will take a lot of time (depending on your interent speed also), but if you aren't looking
-# to change and build a different ROM, then you can simply hit the above command again and it will fetch any new updates from 
+# to change and build a different ROM, then you can simply hit the above command again and it will fetch any new updates from
 # the remote source, if there are any, and you do not have to sync all over again.
 . build/envsetup.sh
+# This bashes a script tp setup a building workspace i.e. Tools, Paths. Validates if you have what is needed to compile.
 lunch lineage_starlte-userdebug
-# If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found 
+# If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found
 # in '~/rom//device/samsung/starlte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_starlte.mk'.
-# Likewise, within this file change the name of the product/device, for example from 'lineage_starlte to aosp_starlte' if you are
+# Likewise, within this file change the name of the product/device, for example from 'lineage_starlte' to aosp_starlte' if you are
 # building 'PixelExperience'.
+# Therefore, it would make sense to change the name of what you are 'lunch'ing, for example 'PixelExperience'
+# would need '$ lunch aosp_starlte-userdebug'.	Hence in most cases, '$ lunch (romName)_(deviceName)-userdebug'
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
-# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4 
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 mv ~/rom/out/target/product/starlte/lineage-15.1-*.zip ~/compiled/
 mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
@@ -67,16 +80,17 @@ toilet -f smblock "starlte done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
 cd
 cd ~/rom/
-. build/envsetup.sh
 lunch lineage_star2lte-userdebug
-# If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found 
-# in '~/rom/device/samsung/star2lte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
+# If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found
+# in '~/rom//device/samsung/star2lte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_star2lte.mk'.
-# Likewise, within this file change the name of the product/device, for example from 'lineage_star2lte' to 'aosp_star2lte' if you are
+# Likewise, within this file change the name of the product/device, for example from 'lineage_star2lte' to aosp_starlte' if you are
 # building 'PixelExperience'.
+# Therefore, it would make sense to change the name of what you are 'lunch'ing, for example 'PixelExperience'
+# would need '$ lunch aosp_star2lte-userdebug'.	Hence in most cases, '$ lunch (romName)_(deviceName)-userdebug'
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
-# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4 
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 mv ~/rom/out/target/product/star2lte/lineage-15.1-*.zip ~/compiled/
 mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
@@ -85,6 +99,6 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 make clean
-# Clean out the obsolte workspace ready for next time. 
+# Clean out the obsolte workspace ready for next time.
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
