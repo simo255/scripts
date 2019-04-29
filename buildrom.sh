@@ -40,8 +40,8 @@ fi
 cd ~/rom/
 repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 # This line will sync the ROM source for oreo-based Lineage. If you would like to build a build a different ROM, search on Google
-# for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file which simply automates
-# the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds of repositories.
+# for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'. A manifest is an .xml file which simply
+# automates the cloning of all the all the ROM sources directories, rather than manually having to clone hundreds of repositories.
 # I would advise you to inspect the manifest that I made 2 commands below which clones necessary repositories for the
 # S9(+) Device, Kernel and Vendor Tree, which are the 3 main components needed to succesfully any ROM for a device(s).
 # To give an example, if you would like to build oreo-based PixelExprience then your command should be:
@@ -51,11 +51,16 @@ repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
 # The file brought from git cloning this repository will automatically clone repositories required for
-# starxxx Device, Kernel and Vendor tree. '#'' the above command if you want to use the crownlte manifest below, or you
-# have your own manifest for your device.
+# starxxx Device, Kernel and Vendor tree for Oreo. '#'' the above command if you want to file is commonly known as a 
+# 'roomservice.xml' as it fetches everything for you, but it could come under any name.
+#
+#git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
+# The file brought from git cloning this repository will automatically clone Device, Kernel and Vendor alpha Pie tree at the
+# stage they were at, before they were made private. Do not report back bugs as they are known and most likely fixed in
+# the private workings. You are expected to use these sources to experiment with an open-mind.
 #
 #git clone https://github.com/synt4x93/Manifest.git local_manifests
-# If you would like to sync Crownlte's Device, Kernel and Vendor Tree instead.
+# If you would like to sync Crownlte's Device, Kernel and Vendor Tree instead, still at version Oreo.
 cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
