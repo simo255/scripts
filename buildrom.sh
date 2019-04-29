@@ -1,11 +1,11 @@
 #!/bin/bash
-# Easier to make a script and describe within what is happening. If you are happy with this script, or are done editing,
+# Easier to make a script and describe within what is happening. If you are happy with the  default script, or are done editing,
 # to activate the script type in your terminal, '$ sudo chmod +x <filepath>/buildrom.sh' to make the script executable 
 # then '$ bash <filepath>/buildrom.sh'.
 # Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you please.
 sudo apt update && sudo apt upgrade -y
-# Update Distro's repository to be able to fetch all needed packages in next command.
-sudo apt install -y openjdk-8-jdk toilet git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
+# Update Distro's repository to be able to fetch and install all needed packages in next command.
+sudo apt install -y openjdk-8-jdk toilet gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
 # If you find that during your compile of a ROM that it errors to require another package then simply:
 #'$ sudo apt install <saidpackagename>' and let me know so I can add it for future users.
@@ -31,17 +31,19 @@ repo init -u git://github.com/LineageOS/android.git -b lineage-15.1
 # This line will sync the ROM source for oreo-based Lineage. Edit if you would like to build a build a different ROM with its
 # according manifest. To give an example, if you would like to build oreo-based PixelExprience then your command should be:
 # repo init -u https://github.com/PixelExperience/manifest -b oreo-mr1
-# '-b' stands for branch and most cases you have to specify a branch as a different branch may be defaulted. 
-cd .repo
+# '-b' stands for branch which in most cases you have to specify as a different branch may be defaulted, within a
+# particular repository. 
+cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
 # If you are part of the Exynos 9810 family, the file brought from git cloning this repository will automatically sync 
 # star and star2 device tree. If you have your own manifest for your devices trees, remove the above command.
+cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 # This will begin syncing the ROM source. The attached tags should ensure an effective sync, otherwise you can just use '$ repo sync' 
-# Initially downloading your ROM's source will take a lot of time (depending on your interent also, but if you aren't looking
+# Initially downloading your ROM's source will take a lot of time (depending on your interent speed also), but if you aren't looking
 # to change and build a different ROM, then you can simply hit the above command again and it will fetch any new updates from 
-# the remote source, if there are any.
+# the remote source, if there are any, and you do not have to sync all over again.
 . build/envsetup.sh
 lunch lineage_starlte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found 
