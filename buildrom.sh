@@ -63,7 +63,7 @@ mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
 # to move the files out and put them into the 'compiled' directory.
 # The reason for the move is to save time going through multiple directories, but if you don't mind it feel free to remove
 # the command
-toilet -f mono12 "star done"
+toilet -f smblock "starlte done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
 cd
 cd ~/rom/
@@ -82,9 +82,9 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.zip ~/compiled/
 mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 # If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
 # to move the files out and put them into the 'compiled' directory.
-toilet -f mono12 "star2 done"
+toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 make clean
 # Clean out the obsolte workspace ready for next time. 
-toilet -f mono12 "script passed"
+toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
