@@ -1,10 +1,13 @@
 #!/bin/bash
 # Easier to make a script and describe within what is happening. If you are happy with the default script, or are done editing,
-# to activate the script type in your terminal, '$ sudo chmod +x <filepath>/buildrom.sh' to make the script executable
-# then '$ bash <filepath>/buildrom.sh'.
+# to activate the script type in your terminal, '$ sudo chmod +x scripts/buildrom.sh' to make the script executable
+# then '$ bash scripts/buildrom.sh'.
 # If you want to stop/interupt the script at any point by inputting 'Ctrl + C', you will only make the script skip the current
 # process and move onto the next command. Most cases the script should abort after an interuption anyway, due to a lacking command(s).
-# Do note this script default compiles LineageOS 15.1 for both starlte and star2lte, so reduce the script as you please.
+# Do note this script default compiles LineageOS 15.1 for both starlte and star2lte. There are commands to build for crownlte,
+# but by default they have been disabled.
+# Key: To enable a command, remove the '#' at the start of the line; to disbale a command, insert a '#'.
+# I would reccomend to keep the entirity of the script, just insert a '#' at the start of command input line that you do not want.
 sudo apt update && sudo apt upgrade -y
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
 sudo apt install -y openjdk-8-jdk toilet python gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
@@ -47,8 +50,12 @@ repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 # particular repository, so be careful of this and make sure you're not wasting a lot time syncing an undesired source.
 cd .repo/
 git clone https://github.com/AzzyC/local_manifests.git
-# If you are part of the Exynos 9810 family, the file brought from git cloning this repository will automatically sync
-# star and star2 device tree. If you have your own manifest for your devices trees, remove the above command.
+# The file brought from git cloning this repository will automatically clone repositories required for
+# starxxx Device, Kernel and Vendor tree. '#'' the above command if you want to use the crownlte manifest below, or you
+# have your own manifest for your device.
+#
+#git clone https://github.com/synt4x93/Manifest.git local_manifests
+# If you would like to sync Crownlte's Device, Kernel and Vendor Tree instead.
 cd
 cd ~/rom/
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
@@ -60,12 +67,15 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 # This bashes a script tp setup a building workspace i.e. Tools, Paths. Validates if you have what is needed to compile.
 lunch lineage_starlte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found
-# in '~/rom//device/samsung/starlte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
+# in '~/rom/device/samsung/starlte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_starlte.mk'.
 # Likewise, within this file change the name of the product/device, for example from 'lineage_starlte' to aosp_starlte' if you are
 # building 'PixelExperience'.
 # Therefore, it would make sense to change the name of what you are 'lunch'ing, for example 'PixelExperience'
 # would need '$ lunch aosp_starlte-userdebug'.	Hence in most cases, '$ lunch (romName)_(deviceName)-userdebug'
+#
+#lunch lineage_crownlte-userdebug
+# The above comments for starlte apply to crownlte too, just change the names respectively.  
 make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
@@ -76,13 +86,20 @@ mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
 # to move the files out and put them into the 'compiled' directory.
 # The reason for the move is to save time going through multiple directories, but if you don't mind it feel free to remove
 # the command
+#
+#mv ~/rom/out/target/product/crownlte/lineage-15.1-*.zip ~/compiled/
+#mv ~/rom/out/target/product/crownlte/lineage-15.1-*.md5sum ~/compiled/
+# If you would like the above comments to occur for crownlte.
 toilet -f smblock "starlte done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
+#
+#toilet -f smblock "crownlte done"
+# To let you know clearly in the terminal that crownlte ROM has compiled.
 cd
 cd ~/rom/
 lunch lineage_star2lte-userdebug
 # If you have changed to a different ROM source, then you should change the name of the 'lineage.mk' file found
-# in '~/rom//device/samsung/star2lte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
+# in '~/rom/device/samsung/star2lte' and rename it to your ROM's needed .mk. For example 'PixelExperience' would
 # need 'aosp_star2lte.mk'.
 # Likewise, within this file change the name of the product/device, for example from 'lineage_star2lte' to aosp_starlte' if you are
 # building 'PixelExperience'.
