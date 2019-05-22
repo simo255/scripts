@@ -17,7 +17,14 @@
 # aspect to the Google Cloud Console; making best of the free trial credits, with the blessed specs and Internet
 # speeds Google has to offer.
 #
+touch .gcloudvncbashed
+# Making a placeholder file, that this script has been bashed i.e. for './buildrom.sh'
+if [ ! -e ".buildrombashed" ]; then
+# If user has bashed the './buildrom.sh' script, prior to this one, then there is no need to spend time checking for
+# updates (to then upgrade) as it was already done. A 'rom' directory was made using the './buildrom.sh' script
+# so this is used to check for this.
 sudo apt update && sudo apt upgrade -y
+fi
 # Update inastance's repository to be able to fetch and install all needed packages in next command.
 sudo apt install -y ubuntu-desktop gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal vnc4server
 # Setup a GUI Desktop Environment.
