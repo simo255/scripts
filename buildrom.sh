@@ -89,7 +89,7 @@ git clone https://github.com/AzzyC/local_manifests.git
 #
 cd
 cd ~/rom/
-repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --quiet
 # This will begin syncing the ROM source and respective device's trees you have enabledusing the manifests (or roomservice) found 
 # in the '~/rom/.repo' directory.
 # The attached tags should ensure an effective sync e.g. the --force-sync tag is to make sure that if the sync gets interrupted
@@ -241,5 +241,7 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 #
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
+x-www-browser https://www.google.com/drive/ https://mega.nz/ 
+# Open Cloud Storage links, for users to uplaod & download their ROM's.
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
