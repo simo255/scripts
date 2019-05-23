@@ -44,8 +44,27 @@ git config --global color.ui true
 if [ ! -d "compiled" ]; then
 # The script is checking 'if' the 'compiled' directory does not exist..
 mkdir ~/compiled/
-# 'then' to make one if there is not.
+# 'then' to make one if there is not. This is where you can collect your ROM's in an organised manner.
 fi
+while ! [[ $REPLY =~ ^(C|c|R|r)$ ]] && [ -d "rom" ]
+do
+	read -p "A 'rom' directory already exists. If you are syncing & compiling the same ROM source that is in this directory, input 'c' to continue. If are syncing a new ROM source, you should rename existing 'rom' directiory by inputting 'r' which will rename to 'prevROM' (c/r) " -n 1 -r
+if [[ $REPLY =~ ^[Rr]$ ]]
+then
+	echo ""
+	mv rom/ prevROM/
+	echo ""
+	echo ""
+	echo "'rom' directory renamed to 'prevROM'"
+	echo ""
+elif [[ ! $REPLY =~ ^[Cc|Rr]$ ]]
+	then
+		echo ""
+		echo ""
+		echo "You did not input 'c'/'C' or 'r'/'R'! Try again."
+		echo ""
+fi
+done
 if [ ! -d "rom" ]; then
 # The script is checking 'if' the 'rom' directory does not exist..
 mkdir ~/rom/
@@ -105,12 +124,24 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --quiet
 # Initially downloading your ROM's source will take a lot of time (factoring in your interent speed also), but if you
 # aren't looking to change and build a different ROM's often, then you can simply hit the above command again and it will
 # fetch any new updates from the remote source, if there are any. - You do not have to wait for the sync all over again.
+while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]]
+do
 read -p "buildrom.sh: Sync Status: Complete. Are your files ready to compile? (y/n) " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]
+if [[ $REPLY =~ ^[Nn]$ ]]
 then
+	echo ""
+	echo ""
+	echo No worries! Simply bash script again, when you are ready.
+	echo ""
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+elif [[ ! $REPLY =~ ^[Yy|Nn]$ ]]
+	then
+		echo ""
+		echo ""
+		echo "You did not input 'y'/'Y' or 'n'/'N'! Try again."
+		echo ""
 fi
+done
 # This prompt is to work as a breaker between the sync and the compile stage, as an opportunity for the user to make file
 # changes i.e. modifying the original 'lineage.mk' and contents within, for a ROM that isn't supported by the Device Tree
 # If you are absolutely sure that you do not require to change files beyond what is prebuilt on the Device Tree and have
@@ -247,7 +278,37 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 #
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
-x-www-browser https://www.google.com/drive/ https://mega.nz/ 
-# Open Cloud Storage links, for users to uplaod & download their ROM's.
+cd ~/
+if [ -e ".gcloudvncbashed" ]; then
+# 'If' GUI exists, from bashing './gcloudvnc.sh'...
+x-www-browser https://www.google.com/drive/ https://mega.nz/
+# 'then' to open Cloud Storage links, for users to uplaod & download their ROM's.
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
+fi
+while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]] && [ ! -e ".gcloudvncbashed" ]
+do
+read -p "buildrom.sh: Compile Status: Complete. Would you like to bash './gcloudvnc.sh' to upload your ROM, if you are using a GCloud VM Instance? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	echo ""
+	sudo chmod +x ~/scripts/gcloudvnc.sh
+	bash ~/scripts/gcloudvnc.sh
+	echo ""
+	echo ""
+	toilet -f smblock "GCloud VNC started"
+	echo ""
+elif [[ $REPLY =~ ^[Nn]$ ]]
+then
+	echo ""
+	echo ""
+	toilet -f smblock "script passed"
+	echo ""
+# To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
+else
+	echo ""
+	echo ""
+	echo "You did not input 'y'/'Y' or 'n'/'N'! Try again."
+	echo ""
+fi
+done
