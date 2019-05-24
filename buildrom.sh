@@ -90,27 +90,71 @@ repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 # A manifest is an .xml file which simply automates the cloning of all the all the ROM source directories, rather than a user
 # manually having to clone hundreds of repositories leading to insanity. The manifest, can be found within a hidden directory
 # where 'repo init' command occurred, called '.repo' => '~/rom/.repo/manifests'. (Use Ctrl + H to view hidden files/directories).
-# I would advise you to inspect this manifest and the one that is 'git clone'd below.
+# I would advise you to inspect this manifest and the one that is cloned below.
 cd .repo/
-git clone https://github.com/AzzyC/local_manifests.git
+echo ""
+PS3='Which Device_AndroidVersion would you like to build? (1/2/3/4) '
+options=("Star-common Oreo" "Crownlte Oreo" "Universal-9810 Pie" "Other Manifest")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Star-common Oreo")
+			echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+			git clone https://github.com/AzzyC/local_manifests.git
 # The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
 # as it fetches everything for you, but it could come under any name.
-#
-# This manifest will coincide with the ROM source manifest, when the script reaches the below '$ repo sync ..' command.
-# Using these manifests as examples should give you enough knowledge to make your own, for a time of a tree bringup on a
-# different device.
-#
-#git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
+			echo ""
+            break
+            ;;
+        "Crownlte Oreo")
+			echo ""
+			echo "You chose '$opt' at Option $REPLY"
+			echo ""
+            git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
 # To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo. These Trees are sourced from @synt4x93.
 # Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest
 # to, and this is where you should add your own manifests.
-#
-#git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
+            echo ""
+            break
+            ;;
+        "Universal-9810 Pie")
+			echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+			git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
 # Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx and crownlte at the
 # state they were at, before they became private. DO NOT report bugs as they are known and most likely fixed in the private
 # workings.
 # You are expected to use these sources to experiment with an open-mind.
+			echo ""
+            break
+            ;;
+        "Other Manifest")
+			echo ""
+			echo "You chose '$opt' at Option $REPLY"
+			echo ""
+			echo "No predefined Manifest selected."
+			echo "Assuming User has edited/added their Devices Manifest, below this prompt."
+# This Option is for the Users that have already edited this script to git clone the manifest for the Device, Kernel, Vendor Tree according
+# to their phone. Users can add the command to clone their manifest after this prompt, under 'done', whereby an example has been given (Not 
+# one to enable).
+			echo ""
+            break
+            ;;
+        *) echo ""
+			echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
+			echo ""
+			;;
+    esac
+done
+# git clone https://github.com/'yourGitHubName'/'repoNameOfWhereManifestSaved.git local_manifests
+#
+# This manifest will coincide with the ROM source manifest, when the script reaches the below '$ repo sync ..' command.
+# Using these manifests as examples should give you enough knowledge to make your own, for a time of a tree bringup on a
+# different device.
 #
 cd
 cd ~/rom/
