@@ -19,6 +19,8 @@
 #
 touch .gcloudvncbashed
 # Making a placeholder file, that this script has been bashed i.e. for './buildrom.sh'
+sudo chmod +x ~scripts/buildrom.sh
+# Give executable permission to other script(s).
 if [ ! -e ".buildrombashed" ]; then
 # If user has bashed the './buildrom.sh' script, prior to this one, then there is no need to spend time checking for
 # updates (to then upgrade) as it was already done. A 'rom' directory was made using the './buildrom.sh' script

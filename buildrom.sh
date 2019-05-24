@@ -17,6 +17,8 @@
 # future users, so please do let me know on Telegram, @inivisibazinga2, or do a 'Pull Request' (PR) on GitHub and I will 
 # review and add your changes when I can!
 touch .buildrombashed
+sudo chmod +x ~/scripts/gcloudvnc.sh
+# Give executable permission to other script(s).
 if [ ! -e ".gcloudvncbashed" ]; then
 # If user has bashed the './gcloudvnc.sh' script, prior to this one, then there is no need to spend time checking for
 # updates (to then upgrade) as it was already done. A placeholder file was created in the './gcloudvnc.sh' script
@@ -46,9 +48,24 @@ if [ ! -d "compiled" ]; then
 mkdir ~/compiled/
 # 'then' to make one if there is not. This is where you can collect your ROM's in an organised manner.
 fi
-while ! [[ $REPLY =~ ^(C|c|R|r)$ ]] && [ -d "rom" ]
+while ! [[ $REPLY =~ ^(C|c|R|r|D|d)$ ]] && [ -d "rom" ]
 do
-	read -p "A 'rom' directory already exists. If you are syncing & compiling the same ROM source that is in this directory, input 'c' to continue. If are syncing a new ROM source, you should rename existing 'rom' directiory by inputting 'r' which will rename to 'prevROM' (c/r) " -n 1 -r
+	echo ""
+	echo "Size of existing 'rom' directory"
+	du -h rom/
+	echo ""
+	echo "'c'/'C' = Continue"
+	echo "'r'/'R' = Rename 'rom'"
+	echo "'d'/'D' = Delete 'rom'; Start fresh"
+	echo ""
+	read -p "buildrom.sh: A 'rom' directory already exists. If syncing & compiling same ROM source that is in this directory, input \
+'c' to continue. If are syncing a new ROM source and want to keep your previous, rename existing 'rom' directiory by \
+inputting 'r' which will rename to 'prevROM'. If you want to save storage and start fresh removing existing 'rom' \
+directory, input 'd' to delete. (c/r/d) " -n 2 -r
+# This prompt is to avoid error or loss of a synced ROM source, so either make sure it's the same ROM source being synced or 
+# seperate the sources into different folders.
+# Note: ROM Sources take up a lot of space e.g. 160GB, so if you do choose to seperate them then make sure you have the storage
+# as required.
 if [[ $REPLY =~ ^[Rr]$ ]]
 then
 	echo ""
@@ -57,11 +74,17 @@ then
 	echo ""
 	echo "'rom' directory renamed to 'prevROM'"
 	echo ""
-elif [[ ! $REPLY =~ ^[Cc|Rr]$ ]]
+elif [[ $REPLY =~ ^[Dd]$ ]]
+	then
+		echo ""
+		sudo rm -rf rom/
+		echo "'rom' directory removed"
+		echo ""
+elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
 	then
 		echo ""
 		echo ""
-		echo "You did not input 'c'/'C' or 'r'/'R'! Try again."
+		echo "You did not input 'c'/'C' ; 'r'/'R' ; 'd'/'D' ! Try again."
 		echo ""
 fi
 done
@@ -336,7 +359,6 @@ read -p "buildrom.sh: Compile Status: Complete. Would you like to bash './gcloud
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 	echo ""
-	sudo chmod +x ~/scripts/gcloudvnc.sh
 	bash ~/scripts/gcloudvnc.sh
 	echo ""
 	echo ""
