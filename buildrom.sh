@@ -10,8 +10,8 @@
 # I would reccomend to keep the entirity of the script, to ensure that the guided comments are still there for reference, 
 # so only disbable the commands you no longer want/require.
 # If you want to stop/interupt the script at any point, input 'Ctrl + C'. You will notice that the script skipped the current
-# process and moved onto the next command, but in most cases the script should abort anyway, due to a lacking command(s). Do
-# be prepared to see errors though as the script comes to its end, because the later commands are based on the previous commands
+# process and moved onto the next command, but in most cases the script should abort anyway, due to a lacking command(s).
+# Be prepared to see errors though as the script comes to its end, because the later commands are based on the previous commands
 # having been done.
 # Lastly, this is open so don't hesitate to share your ideas too! Telling me how this script could be improved could also help
 # future users, so please do let me know on Telegram, @inivisibazinga2, or do a 'Pull Request' (PR) on GitHub and I will 
@@ -94,26 +94,71 @@ mkdir ~/rom/
 # 'then' to make one then to make one if there is not.
 fi
 cd ~/rom/
-repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
-# This line will initialise a sync for oreo-based Lineage (15.1) ROM source. If you would like to build a build a different ROM,
-# search on Google for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'.
-#
-# The Device Tree's, for the 3 devices, currently support: AEX, Bootleggers, LineageOS, ResurrectionRemix and Havoc so you may
-# want to base your 'repo init' on one of these (enable below). If you want to build a ROM that is not currently supported
-# on the Device Trees, then do not be discouraged; there are clear instructions under the 'questiom prompt' function - which is
-# after the 'repo sync -j..' command.
-#
+echo ""
+PS3='Which Rom_AndroidVersion would you like to build? (1/2/3/4) '
+options=("LineageOS 15.1 (Oreo)" "LineageOS 16 (Pie)" "PixelExperience (Pie)" "Other ROM")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "LineageOS 15.1 (Oreo)")
+            echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+            repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
+# This will initialise a manifest repo to sync LineageOS 15.1 (Oreo).
+            echo ""
+            break
+            ;;
+        "LineageOS 16 (Pie)")
+            echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+            repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
+# This will initialise a manifest repo to sync LineageOS 16 (Pie).
+            echo ""
+            break
+            ;;
+        "PixelExperience (Pie)")
+            echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+            repo init -u https://github.com/PixelExperience/manifest -b pie
+# This will initialise a manifest repo to sync Pixel Experience (Pie).
+            echo ""
+            break
+            ;;
+        "Other ROM")
+            echo ""
+            echo "You chose '$opt' at Option $REPLY"
+            echo ""
+            echo "No predefined ROM Source manifest selected."
+            echo "Assuming User has edited/added their chosen ROM Source, below this prompt."
+# This Option is for the Users that have already edited this script and repo initialised a ROM of their choice.
+# Users can add the command to init a ROM after this prompt, under 'done', whereby examples have been given.
+# (Can enable)
+            echo ""
+            break
+            ;;
+        *) echo ""
+            echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
+            echo ""
+            ;;
+    esac
+done
 #repo init -u git://github.com/AospExtended/manifest.git -b 8.1.x
 #repo init -u https://github.com/Havoc-OS/android_manifest.git -b oreo
 #repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b oreo
+# Common task: Search on Google for '<romYouWantToBuildsName> manifest' e.g. 'bootleggers manifest', 'aex manifest'.
 #
-# '-b' stands for branch which in most cases you have to specify as a different branch may be defaulted, within a
-# particular repository. So become familiar with this and make sure you're not wasting time syncing an undesired source.
+# The '-b' in the above example commands stands for 'branch' which in most cases you will have to specify as a different
+# branch may be defaulted, within a particular repository. So become familiar with this and make sure you're not wasting
+# time syncing an undesired source.
 #
 # A manifest is an .xml file which simply automates the cloning of all the all the ROM source directories, rather than a user
 # manually having to clone hundreds of repositories leading to insanity. The manifest, can be found within a hidden directory
 # where 'repo init' command occurred, called '.repo' => '~/rom/.repo/manifests'. (Use Ctrl + H to view hidden files/directories).
 # I would advise you to inspect this manifest and the one that is cloned below.
+#
 cd .repo/
 echo ""
 PS3='Which Device_AndroidVersion would you like to build? (1/2/3/4) '
