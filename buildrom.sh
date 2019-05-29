@@ -64,6 +64,15 @@ sudo chmod a+x /usr/local/bin/repo
 # The above will install the repo tool which will allow you to download and then stay in sync with a ROM's Git source, if it is
 # updated at remote.
 # repo is a python wrapper for git.
+#
+echo ""
+echo "You will now be prompted to select a Java version."
+echo "Ensure you select/type the number for 'java-8-jdk'"
+echo ""
+sudo update-alternatives --config java
+echo ""
+# Java version 8 is needed to execute the code compiling for our Android version(s), above Lollipop.
+#
 git config --global user.name AzzyC
 git config --global user.email azmath2000@gmail.com
 # Change above config according to your GitHub account.
@@ -328,6 +337,7 @@ done
 # Also that this script does not terminate unless a user makes it do so, so refrain from dividing blame on the script when it
 # comes to a compiling issue.
 #
+echo ""
 toilet -f smblock "Compile initiated"
 . build/envsetup.sh
 # This bashes a script tp setup a building workspace i.e. Tools, Paths etc. Validates if you have what is needed to compile.
@@ -381,6 +391,7 @@ mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
 #mv ~/rom/out/target/product/crownlte/lineage-15.1-*.md5sum ~/compiled/
 # If you would like the above comments to occur for crownlte.
 #
+echo ""
 toilet -f smblock "starlte done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
 #
@@ -426,6 +437,7 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 #mv ~/rom/out/target/product/star2lte/Havoc-OS-*.md5sum ~/compiled/
 # For HavocOS Files.
 #
+echo ""
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 cd
@@ -433,6 +445,7 @@ if [ -e ".gcloudvncbashed" ]; then
 # 'If' GUI exists, from bashing './gcloudvnc.sh'...
 x-www-browser https://www.google.com/drive/ https://mega.nz/
 # 'then' to open Cloud Storage links, for users to uplaod & download their ROM's.
+echo ""
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
 fi
