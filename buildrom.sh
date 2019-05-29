@@ -26,15 +26,41 @@ if [ ! -e ".gcloudvncbashed" ]; then
 sudo apt update && sudo apt upgrade -y
 fi
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
-sudo apt install -y openjdk-8-jdk toilet python gnupg flex clang gcc bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip lunzip schedtool imagemagick
+UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
+UBUNTU_16_PACKAGES="libesd0-dev"
+UBUNTU_18_PACKAGES="curl"
+PACKAGES=""
+
+LSB_RELEASE="$(lsb_release -d)"
+
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
+    PACKAGES="${UBUNTU_14_PACKAGES}"
+elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
+    PACKAGES="${UBUNTU_16_PACKAGES}"
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" ]]; then
+    PACKAGES="${UBUNTU_18_PACKAGES}"
+fi
+
+sudo apt update -y
+sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
+g++ g++-multilib gawk gcc gcc-multilib gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
+libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
+libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
+patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
+unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
+
+# In Ubuntu 18.10, libncurses5 package is not available, so we need to hack our way by symlinking required library
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" ]]; then
+  if [[ -e /lib/x86_64-linux-gnu/libncurses.so.6 && ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]]; then
+    sudo ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
+  fi
+fi
 # The abvove will install packages that are needed to compile most ROM's, for systems above Ubuntu 14.04.
 # If you find that during your compile of a ROM that it errors to require another package then simply:
 # '$ sudo apt install <saidPackageName>' and let me know so I can add it for future users.
 # Once you have installed these building packages you can disable the command, as now you only need to update or upgrade.
-mkdir ~/bin
-PATH=~/bin:$PATH
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
+sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
+sudo chmod a+x /usr/local/bin/repo
 # The above will install the repo tool which will allow you to download and then stay in sync with a ROM's Git source, if it is
 # updated at remote.
 # repo is a python wrapper for git.
