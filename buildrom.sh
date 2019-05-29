@@ -131,6 +131,8 @@ do
             echo "You chose '$opt' at Option $REPLY"
             echo ""
             repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
+            cd
+            touch .los15
 # This will initialise a manifest repo to sync LineageOS 15.1 (Oreo).
             echo ""
             break
@@ -140,6 +142,8 @@ do
             echo "You chose '$opt' at Option $REPLY"
             echo ""
             repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
+            cd
+            touch .los16
 # This will initialise a manifest repo to sync LineageOS 16 (Pie).
             echo ""
             break
@@ -149,6 +153,8 @@ do
             echo "You chose '$opt' at Option $REPLY"
             echo ""
             repo init -u https://github.com/PixelExperience/manifest -b pie
+            cd
+            touch .pexpie
 # This will initialise a manifest repo to sync Pixel Experience (Pie).
             echo ""
             break
@@ -185,7 +191,7 @@ done
 # where 'repo init' command occurred, called '.repo' => '~/rom/.repo/manifests'. (Use Ctrl + H to view hidden files/directories).
 # I would advise you to inspect this manifest and the one that is cloned below.
 #
-cd .repo/
+cd ~/rom/.repo/
 echo ""
 PS3='Which Device_AndroidVersion would you like to build? (1/2/3/4) '
 options=("Star-common Oreo" "Crownlte Oreo" "Universal-9810 Pie" "Other Manifest")
@@ -197,6 +203,8 @@ do
             echo "You chose '$opt' at Option $REPLY"
             echo ""
 			git clone https://github.com/AzzyC/local_manifests.git
+			cd
+			touch .staroreo
 # The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
 # as it fetches everything for you, but it could come under any name.
@@ -208,6 +216,8 @@ do
 			echo "You chose '$opt' at Option $REPLY"
 			echo ""
             git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
+            cd
+            touch .crownoreo
 # To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo. These Trees are sourced from @synt4x93.
 # Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest
 # to, and this is where you should add your own manifests.
@@ -219,6 +229,8 @@ do
             echo "You chose '$opt' at Option $REPLY"
             echo ""
 			git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
+			cd
+			touch .uni9810pie
 # Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx and crownlte at the
 # state they were at, before they became private. DO NOT report bugs as they are known and most likely fixed in the private
 # workings.
@@ -416,7 +428,7 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 #
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
-cd ~/
+cd
 if [ -e ".gcloudvncbashed" ]; then
 # 'If' GUI exists, from bashing './gcloudvnc.sh'...
 x-www-browser https://www.google.com/drive/ https://mega.nz/
@@ -449,3 +461,6 @@ else
 	echo ""
 fi
 done
+sudo rm .los15 .los16 .pexpie .staroreo .crownoreo .uni9810pie
+# Remove placeholder files used to automate the commands in the compiling section.
+# Only to refresh the script and allow for new User reply input to prompts on future use.
