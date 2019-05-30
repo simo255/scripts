@@ -83,18 +83,50 @@ if [ ! -d "compiled" ]; then
 mkdir ~/compiled/
 # 'then' to make one if there is not. This is where you can collect your ROM's in an organised manner.
 fi
+while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d "props" ]
+do
+	echo ""
+	ls -1 ~/props/
+	echo ""
+	echo "'c'/'C' = Continue"
+	echo "'d'/'D' = Delete 'props'; Compile ROM with new props"
+	echo ""
+	read -p "buildrom.sh: A 'props' directory already exists, from a previous compile. If syncing & compiling a ROM \
+with the same props as last time, input 'c' to continue. If you want to compile a new ROM with different props \
+, input 'd' to delete the exiting props. (c/d) " -n 2 -r
+# This props should make the script run a lot smoother. With pre-emptive props, the script can recognise what needs to be
+# done seamlessly and less of a need for User input, given that they do not delete props.
+if [[ $REPLY =~ ^[Dd]$ ]]
+	then
+		echo ""
+		sudo rm -rf ~/props/
+		echo "'props' directory removed"
+		echo ""
+elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
+	then
+		echo ""
+		echo ""
+		echo "You did not input 'c'/'C' or 'd'/'D' ! Try again."
+		echo ""
+fi
+done
+if [ ! -d "props" ]; then
+# The script is checking 'if' the 'rom' directory does not exist..
+mkdir ~/props/
+# 'then' to make one then to make one if there is not.
+fi
 while ! [[ $REPLY =~ ^(C|c|R|r|D|d)$ ]] && [ -d "rom" ]
 do
 	echo ""
 	echo "Size of existing 'rom' directory"
-	du -h rom/
+	du -sh ~/rom/
 	echo ""
 	echo "'c'/'C' = Continue"
 	echo "'r'/'R' = Rename 'rom'"
 	echo "'d'/'D' = Delete 'rom'; Start fresh"
 	echo ""
 	read -p "buildrom.sh: A 'rom' directory already exists. If syncing & compiling same ROM source that is in this directory, input \
-'c' to continue. If are syncing a new ROM source and want to keep your previous, rename existing 'rom' directiory by \
+'c' to continue. If are syncing a new ROM source and want to keep your previous, rename existing 'rom' directory by \
 inputting 'r' which will rename to 'prevROM'. If you want to save storage and start fresh removing existing 'rom' \
 directory, input 'd' to delete. (c/r/d) " -n 2 -r
 # This prompt is to avoid error or loss of a synced ROM source, so either make sure it's the same ROM source being synced or 
@@ -104,7 +136,7 @@ directory, input 'd' to delete. (c/r/d) " -n 2 -r
 if [[ $REPLY =~ ^[Rr]$ ]]
 then
 	echo ""
-	mv rom/ prevROM/
+	mv ~/rom/ ~/prevROM/
 	echo ""
 	echo ""
 	echo "'rom' directory renamed to 'prevROM'"
@@ -112,14 +144,14 @@ then
 elif [[ $REPLY =~ ^[Dd]$ ]]
 	then
 		echo ""
-		sudo rm -rf rom/
+		sudo rm -rf ~/rom/
 		echo "'rom' directory removed"
 		echo ""
 elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
 	then
 		echo ""
 		echo ""
-		echo "You did not input 'c'/'C' ; 'r'/'R' ; 'd'/'D' ! Try again."
+		echo "You did not input 'c'/'C' or 'r'/'R' or 'd'/'D' ! Try again."
 		echo ""
 fi
 done
@@ -141,7 +173,7 @@ do
             echo ""
             repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
             cd
-            touch .los15
+            touch props/.los15
 # This will initialise a manifest repo to sync LineageOS 15.1 (Oreo).
             echo ""
             break
@@ -152,7 +184,7 @@ do
             echo ""
             repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
             cd
-            touch .los16
+            touch props/.los16
 # This will initialise a manifest repo to sync LineageOS 16 (Pie).
             echo ""
             break
@@ -163,7 +195,7 @@ do
             echo ""
             repo init -u https://github.com/PixelExperience/manifest -b pie
             cd
-            touch .pexpie
+            touch props/.pexpie
 # This will initialise a manifest repo to sync Pixel Experience (Pie).
             echo ""
             break
@@ -174,6 +206,7 @@ do
             echo ""
             echo "No predefined ROM Source manifest selected."
             echo "Assuming User has edited/added their chosen ROM Source, below this prompt."
+            touch props/.norom
 # This Option is for the Users that have already edited this script and repo initialised a ROM of their choice.
 # Users can add the command to init a ROM after this prompt, under 'done', whereby examples have been given.
 # (Can enable)
@@ -213,7 +246,7 @@ do
             echo ""
 			git clone https://github.com/AzzyC/local_manifests.git
 			cd
-			touch .staroreo
+			touch props/.staroreo
 # The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
 # as it fetches everything for you, but it could come under any name.
@@ -226,7 +259,7 @@ do
 			echo ""
             git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
             cd
-            touch .crownoreo
+            touch props/.crownoreo
 # To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo. These Trees are sourced from @synt4x93.
 # Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest
 # to, and this is where you should add your own manifests.
@@ -239,7 +272,7 @@ do
             echo ""
 			git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
 			cd
-			touch .uni9810pie
+			touch props/.uni9810pie
 # Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx and crownlte at the
 # state they were at, before they became private. DO NOT report bugs as they are known and most likely fixed in the private
 # workings.
@@ -285,7 +318,7 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --quiet
 # fetch any new updates from the remote source, if there are any. - You do not have to wait for the sync all over again.
 while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]]
 do
-read -p "buildrom.sh: Sync Status: Complete. Are your files ready to compile? (y/n) " -n 1 -r
+read -p "buildrom.sh: Sync Status: Complete. Are your files ready to compile? (y/n) " -n 2 -r
 if [[ $REPLY =~ ^[Nn]$ ]]
 then
 	echo ""
@@ -341,7 +374,11 @@ echo ""
 toilet -f smblock "Compile initiated"
 . build/envsetup.sh
 # This bashes a script tp setup a building workspace i.e. Tools, Paths etc. Validates if you have what is needed to compile.
-lunch lineage_starlte-userdebug
+cd ~/props/
+if [ -e ".los15" ] || [ -e ".los16" ]
+then
+	cd ~/rom/
+	lunch lineage_starlte-userdebug
 # If you have changed to a different ROM source, then your 'lunch' command should be based on your ROM's name e.g. look at
 # the example lunch commands below or enable one if it is what you are building.
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
@@ -353,10 +390,10 @@ lunch lineage_starlte-userdebug
 #
 #lunch lineage_crownlte-userdebug
 #lunch aosp_crownlte-userdebug
-export LC_ALL=C
+	export LC_ALL=C
 # Exposing an environment variable needed for systems above Ubuntu 18.04, This command should avoid compiling errors e.g. reading
-# and using makefiles in the correct charset.
-make bacon -j$(nproc --all)
+# and using files and libraries in the correct charset.
+	make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
@@ -368,38 +405,15 @@ make bacon -j$(nproc --all)
 #brunch havoc_starlte-userdebug -j$(nproc --all)
 # Havoc and RR can compile with this command right after '. build/envsetup.sh'. Above comments applies to the '-j' tag too.
 #
-mv ~/rom/out/target/product/starlte/lineage-15.1-*.zip ~/compiled/
-mv ~/rom/out/target/product/starlte/lineage-15.1-*.md5sum ~/compiled/
-# If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
-# to move the files out and put them into the 'compiled' directory.
-# The reason for this move command is to save time going through multiple directories, to grab the compiled ROM but feel free to
-# disable if you don't mind.
-#
-#mv ~/rom/out/target/product/starlte/AospExtended-v5*.zip ~/compiled/
-#mv ~/rom/out/target/product/starlte/AospExtended-v5*.md5sum ~/compiled/
-# For AEX files.
-#
-#mv ~/rom/out/target/product/starlte/Havoc-OS-*.zip ~/compiled/
-#mv ~/rom/out/target/product/starlte/Havoc-OS-*.md5sum ~/compiled/
-# For HavocOS Files.
-#
-#mv ~/rom/out/target/product/starlte/RR-O-*.zip ~/compiled/
-#mv ~/rom/out/target/product/starlte/RR-O-*.md5sum ~/compiled/
-# For ResurrectionRemix files.
-#
-#mv ~/rom/out/target/product/crownlte/lineage-15.1-*.zip ~/compiled/
-#mv ~/rom/out/target/product/crownlte/lineage-15.1-*.md5sum ~/compiled/
-# If you would like the above comments to occur for crownlte.
-#
-echo ""
-toilet -f smblock "starlte done"
+	echo ""
+	toilet -f smblock "starlte done"
 # To let you know clearly in the terminal that starlte ROM has compiled.
 #
 #toilet -f smblock "crownlte done"
 # To let you know clearly in the terminal that crownlte ROM has compiled.
-cd
-cd ~/rom/
-lunch lineage_star2lte-userdebug
+	cd
+	cd ~/rom/
+	lunch lineage_star2lte-userdebug
 # If you have changed to a different ROM source, then your 'lunch' command should be based on your ROM's name e.g. look at
 # the example lunch commands below or enable one if it is what you are building.
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
@@ -408,7 +422,7 @@ lunch lineage_star2lte-userdebug
 #
 #lunch aosp_star2lte-userdebug
 #
-make bacon -j$(nproc --all)
+	make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
@@ -420,8 +434,8 @@ make bacon -j$(nproc --all)
 #brunch havoc_star2lte-userdebug -j$(nproc --all)
 # Havoc and RR can compile with this command right after '. build/envsetup.sh'. Above comments applies to the '-j' tag too.
 #
-mv ~/rom/out/target/product/star2lte/lineage-15.1-*.zip ~/compiled/
-mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
+	mv ~/rom/out/target/product/**/lineage-15.1-*.zip ~/compiled/
+	mv ~/rom/out/target/product/**/lineage-15.1-*.md5sum ~/compiled/
 # If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
 # to move the files out and put them into the 'compiled' directory.
 #
@@ -440,6 +454,7 @@ mv ~/rom/out/target/product/star2lte/lineage-15.1-*.md5sum ~/compiled/
 echo ""
 toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
+fi
 cd
 if [ -e ".gcloudvncbashed" ]; then
 # 'If' GUI exists, from bashing './gcloudvnc.sh'...
@@ -474,6 +489,3 @@ else
 	echo ""
 fi
 done
-sudo rm .los15 .los16 .pexpie .staroreo .crownoreo .uni9810pie
-# Remove placeholder files used to automate the commands in the compiling section.
-# Only to refresh the script and allow for new User reply input to prompts on future use.
