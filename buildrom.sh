@@ -109,11 +109,6 @@ elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
 		echo ""
 fi
 done
-if [ ! -d "props" ]; then
-# The script is checking 'if' the 'rom' directory does not exist..
-mkdir ~/props/
-# 'then' to make one then to make one if there is not.
-fi
 while ! [[ $REPLY =~ ^(C|c|R|r|D|d)$ ]] && [ -d "rom" ]
 do
 	echo ""
@@ -159,65 +154,140 @@ if [ ! -d "rom" ]; then
 mkdir ~/rom/
 # 'then' to make one then to make one if there is not.
 fi
-cd ~/rom/
-echo ""
-PS3='Which Rom_AndroidVersion would you like to build? (1/2/3/4) '
-options=("LineageOS 15.1 (Oreo)" "LineageOS 16 (Pie)" "PixelExperience (Pie)" "Other ROM")
-select opt in "${options[@]}"
-do
-    case $opt in
-        "LineageOS 15.1 (Oreo)")
-            echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-            repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
-            cd
-            touch props/.los15
+if [ -d "props" ]
+	then
+		cd ~/props/
+			if [ -e ".los15" ]
+			then
+				cd ~/rom/
+				echo ""
+				echo "Initialising LineageOS 15"
+				echo ""
+				repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
+				echo ""
+			elif [ -e ".los16" ]
+				then
+					cd ~/rom/
+					echo ""
+					echo "Initialising LineageOS 16"
+					echo ""
+					repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
+					echo ""
+			elif [ -e ".pexpie" ]
+				then
+					cd ~/rom/
+					echo ""
+					echo "Initialising PixelExperience Pie"
+					echo ""
+					repo init -u https://github.com/PixelExperience/manifest -b pie
+					echo ""
+			elif [ -e ".norom" ]
+				then
+					echo ""
+					echo "No predefined ROM source chosen, assuming added into script manually"
+					echo ""
+			elif [ -e ".staroreo" ]
+				then
+					cd ~/rom/.repo
+					echo ""
+					echo "Initialising Starxxx Oreo Tree"
+					echo ""
+					git clone https://github.com/AzzyC/local_manifests.git
+					echo ""
+			elif [ -e ".crownoreo" ]
+				then
+					cd ~/rom/.repo
+					echo ""
+					echo "Initialising Crownlte Oreo Tree"
+					echo ""
+					git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
+					echo ""
+			elif [ -e .uni9810pie ]
+				then
+					cd ~/rom/.repo
+					echo ""
+					echo "Initialising Universal-9810 Pie Tree"
+					echo ""
+					git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
+					echo ""
+			elif [ -e ".nodevice" ]
+				then
+					echo ""
+					echo "No predefined Device Tree(s) chosen, assuming added to script manually"
+					echo ""
+			elif [ -z "$(ls -A ~/props)" ]
+				then
+					echo ""
+					echo "There are no props present in this folder"
+					echo "Reverting to normal User prompts"
+					echo ""
+					sudo rm -rf ~/props/
+			fi
+fi
+if [ ! -d "props" ]
+then
+# The script is checking 'if' the 'props' directory does not exist..
+	mkdir ~/props/
+# 'then' to make one then to make one if there is not.
+	cd ~/rom/
+	echo ""
+	PS3='Which Rom_AndroidVersion would you like to build? (1/2/3/4) '
+	options=("LineageOS 15.1 (Oreo)" "LineageOS 16 (Pie)" "PixelExperience (Pie)" "Other ROM")
+	select opt in "${options[@]}"
+	do
+	    case $opt in
+	        "LineageOS 15.1 (Oreo)")
+	            echo ""
+	            echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+	            repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
+	            cd
+	            touch ~/props/.los15
 # This will initialise a manifest repo to sync LineageOS 15.1 (Oreo).
-            echo ""
-            break
-            ;;
-        "LineageOS 16 (Pie)")
-            echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-            repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
-            cd
-            touch props/.los16
+	            echo ""
+	            break
+	            ;;
+	        "LineageOS 16 (Pie)")
+    	        echo ""
+        	    echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+	            repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
+	            cd
+	            touch ~/props/.los16
 # This will initialise a manifest repo to sync LineageOS 16 (Pie).
-            echo ""
-            break
-            ;;
-        "PixelExperience (Pie)")
-            echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-            repo init -u https://github.com/PixelExperience/manifest -b pie
-            cd
-            touch props/.pexpie
+	            echo ""
+	            break
+	            ;;
+	        "PixelExperience (Pie)")
+	            echo ""
+	            echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+	            repo init -u https://github.com/PixelExperience/manifest -b pie
+	            cd
+	            touch ~/props/.pexpie
 # This will initialise a manifest repo to sync Pixel Experience (Pie).
-            echo ""
-            break
-            ;;
-        "Other ROM")
-            echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-            echo "No predefined ROM Source manifest selected."
-            echo "Assuming User has edited/added their chosen ROM Source, below this prompt."
-            touch props/.norom
+	            echo ""
+	            break
+	            ;;
+	        "Other ROM")
+	            echo ""
+	            echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+	            echo "No predefined ROM Source manifest selected."
+	            echo "Assuming User has edited/added their chosen ROM Source, below this prompt."
+	            touch ~/props/.norom
 # This Option is for the Users that have already edited this script and repo initialised a ROM of their choice.
 # Users can add the command to init a ROM after this prompt, under 'done', whereby examples have been given.
 # (Can enable)
-            echo ""
-            break
-            ;;
-        *) echo ""
-            echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
-            echo ""
-            ;;
-    esac
-done
+	            echo ""
+	            break
+	            ;;
+	        *) echo ""
+	            echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
+	            echo ""
+	            ;;
+	    esac
+	done
 #repo init -u git://github.com/AospExtended/manifest.git -b 8.1.x
 #repo init -u https://github.com/Havoc-OS/android_manifest.git -b oreo
 #repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b oreo
@@ -232,71 +302,73 @@ done
 # where 'repo init' command occurred, called '.repo' => '~/rom/.repo/manifests'. (Use Ctrl + H to view hidden files/directories).
 # I would advise you to inspect this manifest and the one that is cloned below.
 #
-cd ~/rom/.repo/
-echo ""
-PS3='Which Device_AndroidVersion would you like to build? (1/2/3/4) '
-options=("Star-common Oreo" "Crownlte Oreo" "Universal-9810 Pie" "Other Manifest")
-select opt in "${options[@]}"
-do
-    case $opt in
-        "Star-common Oreo")
-			echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-			git clone https://github.com/AzzyC/local_manifests.git
-			cd
-			touch props/.staroreo
+	cd ~/rom/.repo/
+	echo ""
+	PS3='Which Device_AndroidVersion would you like to build? (1/2/3/4) '
+	options=("Star-common Oreo" "Crownlte Oreo" "Universal-9810 Pie" "Other Manifest")
+	select opt in "${options[@]}"
+	do
+	    case $opt in
+	        "Star-common Oreo")
+				echo ""
+	            echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+				git clone https://github.com/AzzyC/local_manifests.git
+				cd
+				touch ~/props/.staroreo
 # The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
 # as it fetches everything for you, but it could come under any name.
-			echo ""
-            break
-            ;;
-        "Crownlte Oreo")
-			echo ""
-			echo "You chose '$opt' at Option $REPLY"
-			echo ""
-            git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
-            cd
-            touch props/.crownoreo
+				echo ""
+	            break
+	            ;;
+	        "Crownlte Oreo")
+				echo ""
+				echo "You chose '$opt' at Option $REPLY"
+				echo ""
+	            git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
+	            cd
+	            touch ~/props/.crownoreo
 # To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo. These Trees are sourced from @synt4x93.
 # Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest
 # to, and this is where you should add your own manifests.
-            echo ""
-            break
-            ;;
-        "Universal-9810 Pie")
-			echo ""
-            echo "You chose '$opt' at Option $REPLY"
-            echo ""
-			git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
-			cd
-			touch props/.uni9810pie
+	            echo ""
+	            break
+	            ;;
+	        "Universal-9810 Pie")
+				echo ""
+	            echo "You chose '$opt' at Option $REPLY"
+	            echo ""
+				git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
+				cd
+				touch ~/props/.uni9810pie
 # Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx and crownlte at the
 # state they were at, before they became private. DO NOT report bugs as they are known and most likely fixed in the private
 # workings.
 # You are expected to use these sources to experiment with an open-mind.
-			echo ""
-            break
-            ;;
-        "Other Manifest")
-			echo ""
-			echo "You chose '$opt' at Option $REPLY"
-			echo ""
-			echo "No predefined Manifest selected."
-			echo "Assuming User has edited/added their Devices Manifest, below this prompt."
+				echo ""
+	            break
+	            ;;
+	        "Other Manifest")
+				echo ""
+				echo "You chose '$opt' at Option $REPLY"
+				echo ""
+				touch ~/props/.nodevice
+				echo "No predefined Manifest selected."
+				echo "Assuming User has edited/added their Devices Manifest, below this prompt."
 # This Option is for the Users that have already edited this script to git clone the manifest for the Device, Kernel, Vendor Tree according
-# to their phone. Users can add the command to clone their manifest after this prompt, under 'done', whereby an example has been given (Not 
+# to their phone. Users can add the command to clone their manifest after this prompt, under 'done; fi', whereby an example has been given (Not 
 # one to enable).
-			echo ""
-            break
-            ;;
-        *) echo ""
-			echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
-			echo ""
-			;;
-    esac
-done
+				echo ""
+	            break
+	            ;;
+	        *) echo ""
+				echo "Invalid: '$REPLY'. You did not choose '1' '2' '3' or '4'! Try again."
+				echo ""
+				;;
+	    esac
+	done
+fi
 # git clone https://github.com/'yourGitHubName'/'repoNameOfWhereManifestSaved.git local_manifests
 #
 # This manifest will coincide with the ROM source manifest, when the script reaches the below '$ repo sync ..' command.
