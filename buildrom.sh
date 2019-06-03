@@ -428,7 +428,7 @@ done
 # the file. It may even be that if it doesn't exist then you have to go for a similar target e.g. if there is
 # no 'common_full_phone.mk' file then inherit 'common.mk'.
 #
-# 4) Do compare your *.mk to devices that your chosen ROM officially supports on their GitHub so that you can find missing
+# 4) Compare your *.mk to devices that your chosen ROM officially supports on their GitHub so that you can find missing
 # inherits which may be crucial for your ROM e.g. a missing Dialer is never desired.
 #
 # 5) Finally, now in the bottom section of the *.mk, change the 'PRODUCT_NAME :=' according to your ROMs name.
@@ -445,99 +445,138 @@ echo ""
 toilet -f smblock "Compile initiated"
 . build/envsetup.sh
 # This bashes a script tp setup a building workspace i.e. Tools, Paths etc. Validates if you have what is needed to compile.
-cd ~/props/
-if [ -e ".los15" ] || [ -e ".los16" ]
-then
-	cd ~/rom/
-	lunch lineage_starlte-userdebug
-# If you have changed to a different ROM source, then your 'lunch' command should be based on your ROM's name e.g. look at
-# the example lunch commands below or enable one if it is what you are building.
-# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
-#
-# Below is a list of 'lunch' commands that you can enable which the starxxx and crownlte Device Tree support:
-#
-#lunch aosp_starlte-userdebug
-# AEX
-#
-#lunch lineage_crownlte-userdebug
-#lunch aosp_crownlte-userdebug
 	export LC_ALL=C
 # Exposing an environment variable needed for systems above Ubuntu 18.04, This command should avoid compiling errors e.g. reading
 # and using files and libraries in the correct charset.
-	make bacon -j$(nproc --all)
-# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
-# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
-# threads using '$ make bacon -j4'
-#
-#mka aex -j$(nproc --all)
-# AEX has its own make command. Above comments applies to the '-j' tag too.
-#
-#brunch rr_starlte-userdebug -j$(nproc --all)
-#brunch havoc_starlte-userdebug -j$(nproc --all)
-# Havoc and RR can compile with this command right after '. build/envsetup.sh'. Above comments applies to the '-j' tag too.
-#
-	echo ""
-	toilet -f smblock "starlte done"
-# To let you know clearly in the terminal that starlte ROM has compiled.
-#
-#toilet -f smblock "crownlte done"
-# To let you know clearly in the terminal that crownlte ROM has compiled.
-	cd
-	cd ~/rom/
-	lunch lineage_star2lte-userdebug
-# If you have changed to a different ROM source, then your 'lunch' command should be based on your ROM's name e.g. look at
-# the example lunch commands below or enable one if it is what you are building.
+cd ~/props/
+if [ -e ".los15" ] || [ -e ".los16" ]
+# These below commands are specific to LineageOS and reflect differently to each device.
+then
+		cd ~/rom/
+	if [ -e ".staroreo" ]
+	then
+		lunch lineage_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
-# Below is a list of 'lunch' commands that you can enable which the starxxx and crownlte Device Tree support:
-#
-#lunch aosp_star2lte-userdebug
-#
-	make bacon -j$(nproc --all)
+		make bacon -j$(nproc --all)
 # This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 #
-#mka aex -j$(nproc --all)
-# AEX has its own make command. Above comments applies to the '-j' tag too.
+		echo ""
+		toilet -f smblock "starlte done"
+# To let you know clearly in the terminal that starlte ROM has compiled.
 #
-#brunch rr_star2lte-userdebug -j$(nproc --all)
-#brunch havoc_star2lte-userdebug -j$(nproc --all)
-# Havoc and RR can compile with this command right after '. build/envsetup.sh'. Above comments applies to the '-j' tag too.
+# If you only want to build for one of these devices, then disable the 3 commands on either side accordingly.
 #
-	mv ~/rom/out/target/product/**/lineage-15.1-*.zip ~/compiled/
-	mv ~/rom/out/target/product/**/lineage-15.1-*.md5sum ~/compiled/
-# If you are building a different ROM, it will output a different zip and md5sum file name, so edit accordingly if you would like
-# to move the files out and put them into the 'compiled' directory.
+		lunch lineage_star2lte-userdebug
+# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
-#mv ~/rom/out/target/product/star2lte/AospExtended-v5*.zip ~/compiled/
-#mv ~/rom/out/target/product/star2lte/AospExtended-v5*.md5sum ~/compiled/
-# For AEX files.
+		make bacon -j$(nproc --all)
+# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
+# threads using '$ make bacon -j4'
 #
-#mv ~/rom/out/target/product/starlte/RR-O-*.zip ~/compiled/
-#mv ~/rom/out/target/product/starlte/RR-O-*.md5sum ~/compiled/
-# For ResurrectionRemix files.
-#
-#mv ~/rom/out/target/product/star2lte/Havoc-OS-*.zip ~/compiled/
-#mv ~/rom/out/target/product/star2lte/Havoc-OS-*.md5sum ~/compiled/
-# For HavocOS Files.
-#
-echo ""
-toilet -f smblock "star2lte done"
+		echo ""
+		toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
+	fi
+# All above commands will only run if U# These below commands are specific to LineageOS and reflect differently to each device.ser had chosen props or inputted a reply for the the Starxxx Device Manifest and the
+# LineageOS sources, beit LOS 15 or LOS 16.1, which will compile for both devices granted the User keeps the commands enabled. 
+	elif [ -e ".crownoreo" ]
+	then
+		lunch lineage_crownlte-userdebug
+# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
+		make bacon -j$(nproc --all)
+# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
+# threads using '$ make bacon -j4'
+		echo ""
+		toilet -f smblock "crownlte done"
+# To let you know clearly in the terminal that crownlte ROM has compiled.
+	fi
+	mv ~/rom/out/target/product/**/lineage-1*.zip ~/compiled/
+	mv ~/rom/out/target/product/**/lineage-1*.md5sum ~/compiled/
+# This command is only to save the user time from going through multiple directories to find the ROM zip and instead find it
+# right it away in the 'compiled' folder.
+#
+fi
+if [ -e ".pexpie" ]
+# These below commands are specific to PixelExperience and reflect differently to each device.
+then
+	cd ~/rom/
+	rename 's/lineage/aosp/' ~/rom/device/**/**/*.mk
+# Most Device Tree(s) are brought up accommodating to LineageOS ROM, so the initial ROM makefile may be 'lineage.mk'
+# or 'lineage_(deviceName).mk' so this command suits to either possible filename to rename the ROM part of the file to
+# 'aosp' as this is the name that PixelExperience uses to recognise the environment is set up to compile.
+	sed -i 's/lineage/aosp/' ~/rom/device/**/**/aosp*.mk
+# As the ROM makefile (.mk) name is 'aosp*' we now have to target changes accordingly. Fortunately the filepath inherits in the
+# original 'lineage.mk' follows a similar file stucture to PixelExperience. Therefore wherever the word 'lineage' is spotted it can
+# be replaced with 'aosp'. Note that these may not always be the changes required, sometimes filepaths need to be checked if they exist.
+# Refer between lines 413 to 442, in this script to understand what other changes may be required.
+	sed -i 's/lineage/aosp/' ~/rom/device/**/**/AndroidProducts.mk
+# If this file does exist in a Device Tree then when it comes to the lunch environment setup stage, this file will be used to recognise
+# the name of the ROM makefile, holding the device and ROM inherits. Since the file has been renamed, it would be appropriate to rename it
+# here too, so that the file can be found and hence no error.
+#
+# Notice that no particular has been specified in the filepath, such as 'samsung'/'starlte/star2lte/crownlte'. This for those handful 
+# of users that may be using this script outside of Exynos9810, so the changes can be applicable universally.
+# I will try and keep commands device neutral, when possible.
+	if [ -e ".staroreo" ]
+	then
+		lunch aosp_starlte-userdebug
+# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
+		mka bacon -j$(nproc --all)
+# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
+# threads using '$ make bacon -j4'.
+# 'mka' is used here because PixelExperience have customed their make/compile command.
+		echo ""
+		toilet -f smblock "starlte done"
+#
+# If you only want to build for one of these devices, then disable the 3 commands on either side accordingly.
+#
+		lunch lineage_star2lte-userdebug
+# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
+#
+		mka bacon -j$(nproc --all)
+# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
+# threads using '$ make bacon -j4'
+# 'mka' is used here because PixelExperience have customed their make/compile command.
+	fi
+	elif [ -e ".crownoreo" ]
+	then
+		lunch aosp_crownlte-userdebug
+# In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
+		mka bacon -j$(nproc --all)
+# This will use all available CPU threads to build, if you do not wish this remove '(nproc --all)' and replace it with
+# the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
+# threads using '$ make bacon -j4'.
+# 'mka' is used here because PixelExperience have customed their make/compile command.
+		echo ""
+		toilet -f smblock "crownlte done"
+# To let you know clearly in the terminal that crownlte ROM has compiled.
+	fi
+	mv ~/rom/out/target/product/**/PixelExperience_*.zip ~/compiled/
+	mv ~/rom/out/target/product/**/PixelExperience_*.md5sum ~/compiled/
+# This command is only to save the user time from going through multiple directories to find the ROM zip and instead find it
+# right it away in the 'compiled' folder.
+#
 fi
 cd
 if [ -e ".gcloudvncbashed" ]; then
 # 'If' GUI exists, from bashing './gcloudvnc.sh'...
 x-www-browser https://www.google.com/drive/ https://mega.nz/
-# 'then' to open Cloud Storage links, for users to uplaod & download their ROM's.
+# 'then' to open Cloud Storage links, for users to upload & download their ROM's.
 echo ""
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
 fi
 while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]] && [ ! -e ".gcloudvncbashed" ]
 do
-read -p "buildrom.sh: Compile Status: Complete. Would you like to bash './gcloudvnc.sh' to upload your ROM, if you are using a GCloud VM Instance? (y/n) " -n 1 -r
+read -p "buildrom.sh: Compile Status: Complete. Would you like to bash './gcloudvnc.sh' to upload your \
+ROM, if you are using a GCloud VM Instance? (y/n) " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 	echo ""
