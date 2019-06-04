@@ -221,9 +221,11 @@ if [ -d "props" ]
 					echo "There are no props present in this folder"
 					echo "Reverting to normal User prompts"
 					echo ""
+					cd
 					sudo rm -rf ~/props/
 			fi
 fi
+cd
 if [ ! -d "props" ]
 then
 # The script is checking 'if' the 'props' directory does not exist..
@@ -377,6 +379,7 @@ fi
 #
 cd
 cd ~/rom/
+echo "Syncing Sources:"
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --quiet
 # This will begin syncing the ROM source and respective device's trees you have enabledusing the manifests (or roomservice) found 
 # in the '~/rom/.repo' directory.
@@ -452,9 +455,9 @@ cd ~/props/
 if [ -e ".los15" ] || [ -e ".los16" ]
 # These below commands are specific to LineageOS and reflect differently to each device.
 then
-		cd ~/rom/
 	if [ -e ".staroreo" ]
 	then
+		cd ~/rom/
 		lunch lineage_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
@@ -480,11 +483,11 @@ then
 		echo ""
 		toilet -f smblock "star2lte done"
 # To let you know clearly in the terminal that star2lte ROM has compiled.
-	fi
 # All above commands will only run if U# These below commands are specific to LineageOS and reflect differently to each device.ser had chosen props or inputted a reply for the the Starxxx Device Manifest and the
 # LineageOS sources, beit LOS 15 or LOS 16.1, which will compile for both devices granted the User keeps the commands enabled. 
 	elif [ -e ".crownoreo" ]
 	then
+		cd ~/rom/
 		lunch lineage_crownlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		make bacon -j$(nproc --all)
@@ -501,10 +504,10 @@ then
 # right it away in the 'compiled' folder.
 #
 fi
+cd ~/props
 if [ -e ".pexpie" ]
 # These below commands are specific to PixelExperience and reflect differently to each device.
 then
-	cd ~/rom/
 	rename 's/lineage/aosp/' ~/rom/device/**/**/*.mk
 # Most Device Tree(s) are brought up accommodating to LineageOS ROM, so the initial ROM makefile may be 'lineage.mk'
 # or 'lineage_(deviceName).mk' so this command suits to either possible filename to rename the ROM part of the file to
@@ -524,6 +527,7 @@ then
 # I will try and keep commands device neutral, when possible.
 	if [ -e ".staroreo" ]
 	then
+		cd ~/rom/
 		lunch aosp_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		mka bacon -j$(nproc --all)
@@ -536,7 +540,7 @@ then
 #
 # If you only want to build for one of these devices, then disable the 3 commands on either side accordingly.
 #
-		lunch lineage_star2lte-userdebug
+		lunch aosp_star2lte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
 		mka bacon -j$(nproc --all)
@@ -544,9 +548,9 @@ then
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 # 'mka' is used here because PixelExperience have customed their make/compile command.
-	fi
 	elif [ -e ".crownoreo" ]
 	then
+		cd ~/rom/
 		lunch aosp_crownlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		mka bacon -j$(nproc --all)
@@ -566,9 +570,6 @@ then
 fi
 cd
 if [ -e ".gcloudvncbashed" ]; then
-# 'If' GUI exists, from bashing './gcloudvnc.sh'...
-x-www-browser https://www.google.com/drive/ https://mega.nz/
-# 'then' to open Cloud Storage links, for users to upload & download their ROM's.
 echo ""
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
