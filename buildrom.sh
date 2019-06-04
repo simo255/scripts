@@ -19,7 +19,7 @@
 touch .buildrombashed
 sudo chmod +x ~/scripts/gcloudvnc.sh
 # Give executable permission to other script(s).
-if [ ! -e ".gcloudvncbashed" ]; then
+if [ ! -e ~/.gcloudvncbashed ]; then
 # If user has bashed the './gcloudvnc.sh' script, prior to this one, then there is no need to spend time checking for
 # updates (to then upgrade) as it was already done. A placeholder file was created in the './gcloudvnc.sh' script
 # called 'updated' to check for this.
@@ -82,7 +82,7 @@ if [ ! -d "compiled" ]; then
 mkdir ~/compiled/
 # 'then' to make one if there is not. This is where you can collect your ROM's in an organised manner.
 fi
-while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d "props" ]
+while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d ~/props/ ]
 do
 	echo ""
 	ls -1 ~/props/
@@ -109,7 +109,7 @@ elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
 		echo ""
 fi
 done
-while ! [[ $REPLY =~ ^(C|c|R|r|D|d)$ ]] && [ -d "rom" ]
+while ! [[ $REPLY =~ ^(C|c|R|r|D|d)$ ]] && [ -d ~/rom/ ]
 do
 	echo ""
 	echo "Size of existing 'rom' directory"
@@ -149,44 +149,41 @@ elif [[ ! $REPLY =~ ^[Cc|Rr|Dd]$ ]]
 		echo ""
 fi
 done
-if [ ! -d "rom" ]; then
+if [ ! -d ~/rom/ ]; then
 # The script is checking 'if' the 'rom' directory does not exist..
 mkdir ~/rom/
 # 'then' to make one then to make one if there is not.
 fi
-if [ -d "props" ]
+cd ~/rom/
+if [ -d ~/props/ ]
 	then
-		cd ~/props/
-			if [ -e ".los15" ]
+			if [ -e ~/props/.los15 ]
 			then
-				cd ~/rom/
 				echo ""
 				echo "Initialising LineageOS 15"
 				echo ""
 				repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
 				echo ""
-			elif [ -e ".los16" ]
+			elif [ -e ~/props/.los16 ]
 				then
-					cd ~/rom/
 					echo ""
 					echo "Initialising LineageOS 16"
 					echo ""
 					repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
 					echo ""
-			elif [ -e ".pexpie" ]
+			elif [ -e ~/props/.pexpie ]
 				then
-					cd ~/rom/
 					echo ""
 					echo "Initialising PixelExperience Pie"
 					echo ""
 					repo init -u https://github.com/PixelExperience/manifest -b pie
 					echo ""
-			elif [ -e ".norom" ]
+			elif [ -e ~/props/.norom ]
 				then
 					echo ""
 					echo "No predefined ROM source chosen, assuming added into script manually"
 					echo ""
-			elif [ -e ".staroreo" ]
+			elif [ -e ~/props/.staroreo ]
 				then
 					cd ~/rom/.repo
 					echo ""
@@ -194,7 +191,7 @@ if [ -d "props" ]
 					echo ""
 					git clone https://github.com/AzzyC/local_manifests.git
 					echo ""
-			elif [ -e ".crownoreo" ]
+			elif [ -e ~/props/.crownoreo ]
 				then
 					cd ~/rom/.repo
 					echo ""
@@ -202,7 +199,7 @@ if [ -d "props" ]
 					echo ""
 					git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
 					echo ""
-			elif [ -e .uni9810pie ]
+			elif [ -e ~/props/.uni9810pie ]
 				then
 					cd ~/rom/.repo
 					echo ""
@@ -210,7 +207,7 @@ if [ -d "props" ]
 					echo ""
 					git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
 					echo ""
-			elif [ -e ".nodevice" ]
+			elif [ -e ~/props/.nodevice ]
 				then
 					echo ""
 					echo "No predefined Device Tree(s) chosen, assuming added to script manually"
@@ -225,8 +222,7 @@ if [ -d "props" ]
 					sudo rm -rf ~/props/
 			fi
 fi
-cd
-if [ ! -d "props" ]
+if [ ! -d ~/props/ ]
 then
 # The script is checking 'if' the 'props' directory does not exist..
 	mkdir ~/props/
@@ -243,7 +239,6 @@ then
 	            echo "You chose '$opt' at Option $REPLY"
 	            echo ""
 	            repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
-	            cd
 	            touch ~/props/.los15
 # This will initialise a manifest repo to sync LineageOS 15.1 (Oreo).
 	            echo ""
@@ -254,7 +249,6 @@ then
         	    echo "You chose '$opt' at Option $REPLY"
 	            echo ""
 	            repo init -u git://github.com/LineageOS/android.git -b lineage-16.0
-	            cd
 	            touch ~/props/.los16
 # This will initialise a manifest repo to sync LineageOS 16 (Pie).
 	            echo ""
@@ -265,7 +259,6 @@ then
 	            echo "You chose '$opt' at Option $REPLY"
 	            echo ""
 	            repo init -u https://github.com/PixelExperience/manifest -b pie
-	            cd
 	            touch ~/props/.pexpie
 # This will initialise a manifest repo to sync Pixel Experience (Pie).
 	            echo ""
@@ -316,7 +309,6 @@ then
 	            echo "You chose '$opt' at Option $REPLY"
 	            echo ""
 				git clone https://github.com/AzzyC/local_manifests.git
-				cd
 				touch ~/props/.staroreo
 # The file brought from cloning this repository will automatically clone repositories required for
 # starxxx Device, Kernel and Vendor tree for Oreo. The file is commonly known as a 'roomservice.xml',
@@ -329,7 +321,6 @@ then
 				echo "You chose '$opt' at Option $REPLY"
 				echo ""
 	            git clone https://github.com/AzzyC/local_manifests-crown.git local_manifests
-	            cd
 	            touch ~/props/.crownoreo
 # To sync Crownlte's Device, Kernel and Vendor Tree instead, at version Oreo. These Trees are sourced from @synt4x93.
 # Notice how on this command, local_manifests has been added. This is to direct a path which git should should clone the manfiest
@@ -342,7 +333,6 @@ then
 	            echo "You chose '$opt' at Option $REPLY"
 	            echo ""
 				git clone https://github.com/AzzyC/local_manifests.git -b lineage-16.0
-				cd
 				touch ~/props/.uni9810pie
 # Cloning this repository holds the manifest to sync the Device, Kernel and Vendor alpha Pie tree for starxxx and crownlte at the
 # state they were at, before they became private. DO NOT report bugs as they are known and most likely fixed in the private
@@ -377,7 +367,6 @@ fi
 # Using these manifests as examples should give you enough knowledge to make your own, for a time of a tree bringup on a
 # different device.
 #
-cd
 cd ~/rom/
 echo "Syncing Sources:"
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --quiet
@@ -451,13 +440,11 @@ toilet -f smblock "Compile initiated"
 	export LC_ALL=C
 # Exposing an environment variable needed for systems above Ubuntu 18.04, This command should avoid compiling errors e.g. reading
 # and using files and libraries in the correct charset.
-cd ~/props/
-if [ -e ".los15" ] || [ -e ".los16" ]
+if [ -e ~/props/.los15 ] || [ -e ~/props/.los16 ]
 # These below commands are specific to LineageOS and reflect differently to each device.
 then
-	if [ -e ".staroreo" ]
+	if [ -e ~/props/.staroreo ]
 	then
-		cd ~/rom/
 		lunch lineage_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
@@ -485,9 +472,8 @@ then
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 # All above commands will only run if U# These below commands are specific to LineageOS and reflect differently to each device.ser had chosen props or inputted a reply for the the Starxxx Device Manifest and the
 # LineageOS sources, beit LOS 15 or LOS 16.1, which will compile for both devices granted the User keeps the commands enabled. 
-	elif [ -e ".crownoreo" ]
+	elif [ -e ~/props/.crownoreo ]
 	then
-		cd ~/rom/
 		lunch lineage_crownlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		make bacon -j$(nproc --all)
@@ -498,14 +484,16 @@ then
 		toilet -f smblock "crownlte done"
 # To let you know clearly in the terminal that crownlte ROM has compiled.
 	fi
-	mv ~/rom/out/target/product/**/lineage-1*.zip ~/compiled/
-	mv ~/rom/out/target/product/**/lineage-1*.md5sum ~/compiled/
+	if [ -d ~/rom/out/target/product/**/ ]
+	then
+		mv ~/rom/out/target/product/**/lineage-1*.zip ~/compiled/
+		mv ~/rom/out/target/product/**/lineage-1*.md5sum ~/compiled/
+	fi
 # This command is only to save the user time from going through multiple directories to find the ROM zip and instead find it
 # right it away in the 'compiled' folder.
 #
 fi
-cd ~/props
-if [ -e ".pexpie" ]
+if [ -e ~/props/.pexpie ]
 # These below commands are specific to PixelExperience and reflect differently to each device.
 then
 	rename 's/lineage/aosp/' ~/rom/device/**/**/*.mk
@@ -525,9 +513,8 @@ then
 # Notice that no particular has been specified in the filepath, such as 'samsung'/'starlte/star2lte/crownlte'. This for those handful 
 # of users that may be using this script outside of Exynos9810, so the changes can be applicable universally.
 # I will try and keep commands device neutral, when possible.
-	if [ -e ".staroreo" ]
+	if [ -e ~/props/.staroreo ]
 	then
-		cd ~/rom/
 		lunch aosp_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		mka bacon -j$(nproc --all)
@@ -548,9 +535,8 @@ then
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 # 'mka' is used here because PixelExperience have customed their make/compile command.
-	elif [ -e ".crownoreo" ]
+	elif [ -e ~/props/.crownoreo ]
 	then
-		cd ~/rom/
 		lunch aosp_crownlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 		mka bacon -j$(nproc --all)
@@ -562,19 +548,21 @@ then
 		toilet -f smblock "crownlte done"
 # To let you know clearly in the terminal that crownlte ROM has compiled.
 	fi
-	mv ~/rom/out/target/product/**/PixelExperience_*.zip ~/compiled/
-	mv ~/rom/out/target/product/**/PixelExperience_*.md5sum ~/compiled/
+	if [ -d ~/rom/out/target/product/**/ ]
+	then
+		mv ~/rom/out/target/product/**/PixelExperience_*.zip ~/compiled/
+		mv ~/rom/out/target/product/**/PixelExperience_*.md5sum ~/compiled/
+	fi
 # This command is only to save the user time from going through multiple directories to find the ROM zip and instead find it
 # right it away in the 'compiled' folder.
 #
 fi
-cd
-if [ -e ".gcloudvncbashed" ]; then
+if [ -e ~/props/.gcloudvncbashed ]; then
 echo ""
 toilet -f smblock "script passed"
 # To let you know clearly in the terminal that the script has finished. and it is safe to close terminal.
 fi
-while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]] && [ ! -e ".gcloudvncbashed" ]
+while ! [[ $REPLY =~ ^(Y|y|N|n)$ ]] && [ ! -e ~/.gcloudvncbashed ]
 do
 read -p "buildrom.sh: Compile Status: Complete. Would you like to bash './gcloudvnc.sh' to upload your \
 ROM, if you are using a GCloud VM Instance? (y/n) " -n 1 -r
