@@ -41,12 +41,14 @@ elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" ]]; then
     PACKAGES="${UBUNTU_18_PACKAGES}"
 fi
 
+if [ ! -e ~/.buildrombashed ]; then
 sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
 g++ g++-multilib gawk gcc gcc-multilib git-core gnupg gperf imagemagick lib32ncurses5-dev lib32z-dev lib32z1-dev libtinfo5 \
 libc6-dev libc6-dev-i386 libcap-dev libexpat1-dev libgl1-mesa-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
 libncurses5-dev libsdl1.2-dev libssl-dev libtool libx11-dev libxml2 libxml2-utils lunzip lzma* lzop maven ncftp ncurses-dev openjdk-8-jdk \
 patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo toilet \
 unzip w3m x11proto-core-dev xsltproc zip zlib1g-dev "${PACKAGES}"
+fi
 
 # In Ubuntu 18.10, libncurses5 package is not available, so we need to hack our way by symlinking required library
 if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" ]]; then
@@ -85,7 +87,7 @@ fi
 while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d ~/props/ ]
 do
 	echo ""
-	ls -1 ~/props/
+	ls -a -1 ~/props/
 	echo ""
 	echo "'c'/'C' = Continue"
 	echo "'d'/'D' = Delete 'props'; Compile ROM with new props"
@@ -157,6 +159,7 @@ fi
 cd ~/rom/
 if [ -d ~/props/ ]
 	then
+		echo "Using existing props.."
 			if [ -e ~/props/.los15 ]
 			then
 				echo ""
@@ -455,7 +458,9 @@ then
 # threads using '$ make bacon -j4'
 #
 		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
 		toilet -f smblock "starlte done"
+		fi
 # To let you know clearly in the terminal that starlte ROM has compiled.
 #
 # If you only want to build for one of these devices, then disable the 3 commands on either side accordingly.
@@ -469,7 +474,9 @@ then
 # threads using '$ make bacon -j4'
 #
 		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
 		toilet -f smblock "star2lte done"
+		fi
 # To let you know clearly in the terminal that star2lte ROM has compiled.
 # All above commands will only run if U# These below commands are specific to LineageOS and reflect differently to each device.ser had chosen props or inputted a reply for the the Starxxx Device Manifest and the
 # LineageOS sources, beit LOS 15 or LOS 16.1, which will compile for both devices granted the User keeps the commands enabled. 
@@ -482,7 +489,9 @@ then
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
 		toilet -f smblock "crownlte done"
+		fi
 # To let you know clearly in the terminal that crownlte ROM has compiled.
 	fi
 	if [ -d ~/rom/out/target/product/**/ ]
@@ -524,7 +533,9 @@ then
 # threads using '$ make bacon -j4'.
 # 'mka' is used here because PixelExperience have customed their make/compile command.
 		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
 		toilet -f smblock "starlte done"
+		fi
 #
 # If you only want to build for one of these devices, then disable the 3 commands on either side accordingly.
 #
@@ -536,6 +547,10 @@ then
 # the number of threads you would like to give to the compile. Example if you have 4 CPU Cores, then you can make 4
 # threads using '$ make bacon -j4'
 # 'mka' is used here because PixelExperience have customed their make/compile command.
+		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
+		toilet -f smblock "star2lte done"
+		fi
 	elif [ -e ~/props/.crownoreo ]
 	then
 		lunch aosp_crownlte-userdebug
@@ -546,7 +561,9 @@ then
 # threads using '$ make bacon -j4'.
 # 'mka' is used here because PixelExperience have customed their make/compile command.
 		echo ""
+		if [ -d ~/rom/out/target/product/**/ ]
 		toilet -f smblock "crownlte done"
+		fi
 # To let you know clearly in the terminal that crownlte ROM has compiled.
 	fi
 	if [ -d ~/rom/out/target/product/**/ ]
