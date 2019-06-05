@@ -449,6 +449,13 @@ if [ -e ~/props/.los15 ] || [ -e ~/props/.los16 ]
 then
 	if [ -e ~/props/.staroreo ]
 	then
+		cd ~/rom/kernel/samsung/star-common
+		git revert e4a56a974913373fe046159905d0e6fe47420d6a
+# Commit Summary: 'defconfigs: Correct path for GCC 9.1'
+		git revert 68b85dadc180efaab5311fbfbf2325ded6ccd0fc
+# Commit Summary: 'Makefile: Disable psabi warnings: We don't need to worry about this, as all of our libraries are being
+# compiled exclusively with GCC 9.1.'
+		cd ~/rom/
 		lunch lineage_starlte-userdebug
 # In most cases, it is '$ lunch (romName)_(deviceName)-userdebug'
 #
