@@ -183,7 +183,8 @@ if [ -d ~/props/ ]
 					echo ""
 					echo "No predefined ROM source chosen, assuming added into script manually"
 					echo ""
-			elif [ -e ~/props/.staroreo ]
+			fi
+			if [ -e ~/props/.staroreo ]
 				then
 					cd ~/rom/.repo
 					echo ""
