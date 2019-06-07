@@ -87,7 +87,7 @@ fi
 while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d ~/props/ ]
 do
 	echo ""
-	ls -a -1 ~/props/
+	ls -AhRsXx --color=always ~/props/
 	echo ""
 	echo "'c'/'C' = Continue"
 	echo "'d'/'D' = Delete 'props'; Compile ROM with new props"
