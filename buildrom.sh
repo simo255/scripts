@@ -16,14 +16,15 @@
 # Lastly, this is open so don't hesitate to share your ideas too! Telling me how this script could be improved could also help
 # future users, so please do let me know on Telegram, @inivisibazinga2, or do a 'Pull Request' (PR) on GitHub and I will 
 # review and add your changes when I can!
-touch .buildrombashed
 sudo chmod +x ~/scripts/gcloudvnc.sh
 # Give executable permission to other script(s).
-if [ ! -e ~/.gcloudvncbashed ]; then
-# If user has bashed the './gcloudvnc.sh' script, prior to this one, then there is no need to spend time checking for
+if ! [ -e ~/.gcloudvncbashed -o -e ~/.buildrombashed ]
+then
+# If user has bashed the './gcloudvnc.sh' script or './buildrom.sh' already, then there is no need to spend time checking for
 # updates (to then upgrade) as it was already done. A placeholder file was created in the './gcloudvnc.sh' script
-# called 'updated' to check for this.
+# called '.gcloudvncbashed' to check for this and another placeholder file, for bashing './buildrom.sh', called '.buildrombashed'.
 sudo apt update && sudo apt upgrade -y
+touch .buildrombashed
 fi
 # Update Distro's repository to be able to fetch and install all needed packages in next command.
 UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev"
@@ -87,7 +88,36 @@ fi
 while ! [[ $REPLY =~ ^(C|c|D|d)$ ]] && [ -d ~/props/ ]
 do
 	echo ""
-	ls -AhRsXx --color=always ~/props/
+	echo "Current ROM Props:"
+		if [ -e ~/props/.los15 ]
+			then
+				echo "• LineageOS 15.1"
+			elif [ -e ~/props/.los16 ]
+				then
+					echo "• LineageOS 16"
+			elif [ -e ~/props/.pexpie ]
+				then
+					echo "• PixelExperience Pie"
+			elif [ -e ~/props/.norom ]
+				then
+					echo "• No predefined ROM"
+			fi
+			if [ -e ~/props/.staroreo ]
+				then
+					cd ~/rom/.repo
+					echo "• Starxxx Oreo Tree"
+			elif [ -e ~/props/.crownoreo ]
+				then
+					cd ~/rom/.repo
+					echo "• Crownlte Oreo Tree"
+			elif [ -e ~/props/.uni9810pie ]
+				then
+					cd ~/rom/.repo
+					echo "• Universal-9810 Pie Tree"
+			elif [ -e ~/props/.nodevice ]
+				then
+					echo "• No predefined Device Tree"
+		fi
 	echo ""
 	echo "'c'/'C' = Continue"
 	echo "'d'/'D' = Delete 'props'; Compile ROM with new props"
@@ -466,6 +496,7 @@ then
 #
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "starlte done"
 		fi
 # To let you know clearly in the terminal that starlte ROM has compiled.
@@ -482,6 +513,7 @@ then
 #
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "star2lte done"
 		fi
 # To let you know clearly in the terminal that star2lte ROM has compiled.
@@ -497,6 +529,7 @@ then
 # threads using '$ make bacon -j4'
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "crownlte done"
 		fi
 # To let you know clearly in the terminal that crownlte ROM has compiled.
@@ -541,6 +574,7 @@ then
 # 'mka' is used here because PixelExperience have customed their make/compile command.
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "starlte done"
 		fi
 #
@@ -556,6 +590,7 @@ then
 # 'mka' is used here because PixelExperience have customed their make/compile command.
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "star2lte done"
 		fi
 	elif [ -e ~/props/.crownoreo ]
@@ -569,6 +604,7 @@ then
 # 'mka' is used here because PixelExperience have customed their make/compile command.
 		echo ""
 		if [ -d ~/rom/out/target/product/**/ ]
+		then
 		toilet -f smblock "crownlte done"
 		fi
 # To let you know clearly in the terminal that crownlte ROM has compiled.
