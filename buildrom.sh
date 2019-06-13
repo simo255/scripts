@@ -75,8 +75,8 @@ sudo update-alternatives --config java
 echo ""
 # Java version 8 is needed to execute the code compiling for our Android version(s), above Lollipop.
 #
-git config --global user.name AzzyC
-git config --global user.email azmath2000@gmail.com
+git config --global user.name simo255
+git config --global user.email bmohamed255@gmail.com
 # Change above config according to your GitHub account.
 git config --global color.ui true
 # Skips prompt on 'repo init' requiring User input for colourised tags during sync.
